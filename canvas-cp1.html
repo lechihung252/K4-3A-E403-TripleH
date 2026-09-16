@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<title>AskOnce Canvas CP1</title>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #faf6ef;
+    --card: #ffffff;
+    --line: #e7e1d6;
+    --navy: #16305c;
+    --text: #2c3a4f;
+    --muted: #5d6878;
+    --green: #4fa889;
+    --blue: #4a8fd0;
+    --purple: #8a78d6;
+    --orange: #e3964a;
+    --blue-soft: #e6f0fb;
+    --purple-soft: #ece8fb;
+    --orange-soft: #fcefdf;
+    --green-soft: #e5f4ee;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    width: 1920px;
+    background: var(--bg);
+    font-family: "Be Vietnam Pro", "Segoe UI", Arial, sans-serif;
+    color: var(--text);
+    padding: 48px 88px 40px;
+  }
+  .top { display: flex; justify-content: space-between; align-items: flex-start; gap: 40px; }
+  .badge {
+    display: inline-flex; align-items: center; gap: 10px;
+    border: 2px solid var(--line); background: #fff; border-radius: 999px;
+    padding: 8px 20px; font-size: 16px; font-weight: 700; letter-spacing: 1.5px; color: var(--navy);
+  }
+  .badge i { width: 10px; height: 10px; border-radius: 50%; background: var(--orange); display: inline-block; }
+  h1 { font-size: 60px; font-weight: 800; color: var(--navy); letter-spacing: -1px; margin-top: 22px; }
+  .sub { font-size: 25px; color: var(--muted); margin-top: 6px; }
+  .meta {
+    background: var(--blue-soft); border: 2px solid #b9d3ef; border-radius: 18px;
+    padding: 20px 24px; font-size: 19px; line-height: 1.55; width: 520px; color: var(--navy);
+  }
+  .meta b { font-weight: 700; }
+
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; margin-top: 34px; }
+  .card {
+    position: relative; background: var(--card); border: 2px solid var(--line);
+    border-radius: 22px; padding: 30px 32px 28px;
+  }
+  .card::before {
+    content: ""; position: absolute; top: -2px; right: 30px; width: 140px; height: 9px;
+    border-radius: 0 0 8px 8px;
+  }
+  .c1::before { background: var(--green); }
+  .c2::before { background: var(--blue); }
+  .c3::before { background: var(--purple); }
+  .c4::before { background: var(--orange); }
+  .label { font-size: 17px; font-weight: 700; letter-spacing: 2px; color: var(--muted); }
+  h2 { font-size: 31px; font-weight: 800; color: var(--navy); margin: 8px 0 16px; line-height: 1.25; }
+  p, li { font-size: 20px; line-height: 1.55; }
+  p + p { margin-top: 12px; }
+  b { color: var(--navy); }
+  hr { border: 0; border-top: 1.5px solid var(--line); margin: 14px 0; }
+
+  .note {
+    border-radius: 14px; padding: 14px 18px; font-size: 18px; line-height: 1.5;
+    display: flex; gap: 12px; margin-top: 14px;
+  }
+  .note .dot { width: 20px; height: 20px; border-radius: 50%; flex: none; margin-top: 3px; }
+  .n-blue { background: var(--blue-soft); } .n-blue .dot { background: var(--blue); }
+  .n-purple { background: var(--purple-soft); } .n-purple .dot { background: var(--purple); }
+  .n-orange { background: var(--orange-soft); } .n-orange .dot { background: #b8763a; }
+  .n-green { background: var(--green-soft); } .n-green .dot { background: var(--green); }
+
+  .mini { font-size: 16px; font-weight: 700; letter-spacing: 1px; color: var(--blue); margin: 4px 0 8px; }
+  ul.stats { list-style: none; }
+  ul.stats li { font-size: 19px; line-height: 1.5; padding-left: 20px; position: relative; }
+  ul.stats li::before { content: "•"; position: absolute; left: 4px; color: var(--blue); font-weight: 800; }
+  .num { font-weight: 800; color: var(--navy); }
+  code { font-family: Consolas, monospace; font-size: 17px; background: #f1ede4; padding: 1px 6px; border-radius: 6px; color: var(--navy); }
+
+  table { width: 100%; border-collapse: collapse; margin-top: 6px; font-size: 16.5px; }
+  th, td { text-align: left; padding: 6px 8px; border-bottom: 1px solid var(--line); vertical-align: top; line-height: 1.35; }
+  th { color: var(--muted); font-weight: 700; font-size: 15px; letter-spacing: .5px; }
+  .yes { color: #b4452f; font-weight: 700; }
+  .ok { color: #2f7f62; font-weight: 700; }
+
+  .pills { display: flex; gap: 10px; margin-bottom: 14px; }
+  .pill { background: var(--purple-soft); color: #4b3c9a; font-weight: 700; font-size: 17px; letter-spacing: 1px; padding: 6px 16px; border-radius: 999px; }
+
+  .roles { margin-top: 6px; }
+  .role { display: grid; grid-template-columns: 230px 1fr; gap: 14px; padding: 12px 0; border-bottom: 1px solid var(--line); }
+  .role:last-child { border-bottom: 0; }
+  .role .who { font-weight: 800; color: var(--navy); font-size: 19px; line-height: 1.35; }
+  .role .who span { display: block; font-weight: 600; color: var(--orange); font-size: 16px; }
+  .role .what { font-size: 18px; line-height: 1.5; }
+
+  .foot {
+    display: flex; justify-content: space-between; align-items: center; margin-top: 30px;
+    padding-top: 22px; border-top: 2px solid var(--line); font-size: 18px; color: var(--muted);
+  }
+  .foot .warn { background: var(--orange-soft); color: #8a5320; border-radius: 12px; padding: 12px 18px; font-weight: 600; }
+</style>
+</head>
+<body>
+
+<div class="top">
+  <div>
+    <div class="badge"><i></i>MINI HACKATHON AI · CHECKPOINT 1 · TRACK B1</div>
+    <h1>ASKONCE · CANVAS 4 Ô</h1>
+    <div class="sub">Trợ lý Discord · hỏi bot một lần, nhận câu trả lời dùng được — không phải chọn menu 1/2/3</div>
+  </div>
+  <div class="meta">
+    <b>Lớp:</b> 3A · <b>Phòng:</b> ____ · <b>Nhóm:</b> 3 thành viên<br>
+    <b>Loại:</b> Tối ưu tính năng có sẵn (bot "Trợ lý")<br>
+    <b>Dữ liệu:</b> <code>discord-pack/</code> + khảo sát học viên K4
+  </div>
+</div>
+
+<div class="grid">
+
+  <!-- 01 -->
+  <div class="card c1">
+    <div class="label">01 · NGƯỜI DÙNG &amp; NỖI ĐAU</div>
+    <h2>Học viên hỏi bot mà phải hỏi đi hỏi lại</h2>
+    <p><b>Job:</b> học viên K4 trong tuần đầu Build Phase cần biết nhanh một quy định vận hành — điểm danh, XP, daily standup, lập team — để làm đúng ngay trong ngày.</p>
+    <hr>
+    <p><b>Pain:</b> học viên tag bot "Trợ lý" bằng một câu hỏi đã rõ, nhưng bot trả về <b>danh sách 1/2/3 bắt chọn lại ngữ cảnh</b> hoặc trả lời không dùng được. Học viên phải gõ lại, tự đi tìm hoặc hỏi bạn — <b>mất 3–10 phút mỗi lần</b>; có người không bao giờ nhận được câu trả lời và <b>làm sai / lỡ việc tính vào điểm</b>.</p>
+    <div class="note n-green"><span class="dot"></span><span><b>Không phải lỗi mọi câu hỏi:</b> câu hỏi dạng lệnh (<code>/daily-standup</code>, <code>/rank</code>) bot trả lời ngay dưới 1 phút. Nỗi đau nằm ở <b>câu hỏi viết tự nhiên</b>.</span></div>
+  </div>
+
+  <!-- 02 -->
+  <div class="card c2">
+    <div class="label">02 · BẰNG CHỨNG BAN ĐẦU</div>
+    <h2>Mining discord-pack + khảo sát đang thu</h2>
+
+    <div class="mini">(B) MINING · 1.092 TIN K4 · 12–14/09 · ĐẾM TỰ ĐỘNG, CHƯA GÁN NHÃN TAY</div>
+    <ul class="stats">
+      <li><span class="num">63/313 (20%)</span> câu trả lời của bot là menu hỏi lại "Bạn muốn hỏi về…? 1. 2. 3."</li>
+      <li><span class="num">53/61</span> người hỏi phải nhắn thêm trong 30 phút sau menu · <span class="num">28/120</span> người tag bot ≥ 3 lần trong 30 phút</li>
+      <li>Ví dụ: <code>M49945</code> <code>M58070</code> <code>M30724</code> <code>M00499</code> <code>M20574</code></li>
+    </ul>
+
+    <div class="mini" style="margin-top:14px">(A) KHẢO SÁT · n = 5 NGƯỜI NGOÀI NHÓM · MỤC TIÊU ≥ 20 TRƯỚC CP4</div>
+    <table>
+      <tr><th>Mã</th><th>Hỏi bot về</th><th>Bot phản hồi đầu tiên</th><th>Nhắn thêm</th><th>Lỡ việc</th></tr>
+      <tr><td>R01</td><td>check điểm danh</td><td>Menu 1/2/3</td><td>2 lượt · 3–10'</td><td class="yes">Có</td></tr>
+      <tr><td>R02</td><td>cách dùng daily-standup</td><td>Không nhớ</td><td>Không bao giờ có</td><td class="yes">Có</td></tr>
+      <tr><td>R03</td><td>xem điểm cá nhân</td><td>Bảo hỏi BTC/TA</td><td>0 · 3–10'</td><td class="ok">Không</td></tr>
+      <tr><td>R04</td><td><code>/daily-standup</code></td><td>Trả lời thẳng</td><td>0 · &lt; 1'</td><td class="ok">Không</td></tr>
+      <tr><td>R05</td><td><code>/rank</code></td><td>Trả lời thẳng</td><td>0 · &lt; 1'</td><td class="ok">Không</td></tr>
+    </table>
+    <div class="note n-blue"><span class="dot"></span><span><b>Tiêu chí xác nhận (chốt trước):</b> bot trả menu / không có thông tin / lạc đề <b>và</b> phải nhắn thêm ≥ 1 lượt → hiện <b>1/5</b>. <b>2/5</b> không có câu trả lời dùng được ngay, <b>2/5</b> từng lỡ việc. Chưa đủ mẫu — đang thu tiếp.</span></div>
+  </div>
+
+  <!-- 03 -->
+  <div class="card c3">
+    <div class="label">03 · LÁT CẮT &amp; AUTOMATION</div>
+    <h2>Một câu hỏi, một quyết định: trả lời, hỏi lại hay chuyển TA</h2>
+    <div class="pills"><span class="pill">ANSWER</span><span class="pill">CLARIFY</span><span class="pill">ESCALATE</span></div>
+    <p><b>Lát cắt:</b> một học viên K4 · hỏi bot một câu về quy định Build Phase · AI quyết định <b>trả lời ngay</b> (câu đã rõ và có căn cứ trong thông báo chính thức), <b>hỏi lại đúng một câu</b> (thật sự thiếu thông tin), hoặc <b>chuyển TA</b> (không có căn cứ / hỏi dữ liệu cá nhân) · học viên nhận câu trả lời có dẫn nguồn trong một lượt.</p>
+    <div class="note n-purple"><span class="dot"></span><span><b>Conditional:</b> tự trả lời khi có nguồn; hỏi lại tối đa 1 câu; chuyển TA khi hỏi điểm / điểm danh cá nhân hoặc không tìm thấy nguồn.</span></div>
+    <div class="note n-purple"><span class="dot"></span><span><b>Cost-of-error:</b> trả lời sai điểm danh, XP, deadline → học viên mất điểm (đắt, khó sửa). Hỏi lại thừa → mất 3–10 phút, dễ bỏ cuộc — đang xảy ra ở 20% câu trả lời của bot.</span></div>
+  </div>
+
+  <!-- 04 -->
+  <div class="card c4">
+    <div class="label">04 · NGƯỜI THỬ &amp; PHÂN CÔNG</div>
+    <h2>Có người thử, có người chịu trách nhiệm</h2>
+    <p><b>Willing users:</b> <b>Nguyễn Vũ Anh</b> · <b>Nguyễn Duy Phong</b> — người ngoài nhóm, đã đồng ý thử demo ngày 18/9. Mục tiêu 5 người ngoài nhóm ở CP5.</p>
+    <div class="roles">
+      <div class="role">
+        <div class="who">Vũ Việt Hoàng<span>Đội trưởng · Spec + Evidence</span></div>
+        <div class="what">Nộp 5 checkpoint, viết <code>spec.md</code>; thu khảo sát lên ≥ 20 người; gán nhãn tay 63 menu (hỏi lại thừa / cần thiết) + ghi phương pháp đếm</div>
+      </div>
+      <div class="role">
+        <div class="who">Nguyễn Văn Hưởng<span>Prompt + Eval</span></div>
+        <div class="what">Lời gọi AI phân loại ANSWER / CLARIFY / ESCALATE; golden set ≥ 20 case từ <code>msg_id</code> thật; bảng kết quả trong <code>eval/</code></div>
+      </div>
+      <div class="role">
+        <div class="who">Lê Chí Hùng<span>Prototype + Validation</span></div>
+        <div class="what">Giao diện demo; bộ thông báo nguồn (tự dựng, ghi rõ); phiên dùng thử với willing users, quote + nhật ký trong <code>validation/</code></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="foot">
+  <span><b>Checkpoint 1 · AskOnce</b> · Số liệu mining là đếm tự động, sẽ kiểm lại bằng gán nhãn tay trước CP4</span>
+  <span class="warn">Chỉ dẫn mã <code>M#####</code> / R##, không chép nguyên văn tin nhắn Discord</span>
+</div>
+
+</body>
+</html>
