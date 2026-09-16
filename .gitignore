@@ -1,0 +1,11 @@
+# Không commit API key
+.env
+.env.*
+
+# Không commit data pack và CSV khảo sát (có tên người)
+data/
+*.csv
+
+# Hệ thống
+.DS_Store
+node_modules/
