@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AskOnce · Prototype</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="app">
+    <header class="top">
+      <div>
+        <div class="eyebrow">AskOnce · TripleH · Track B1</div>
+        <h1>#hoi-dap · @AskOnce</h1>
+      </div>
+      <div class="top-right">
+        <span class="pill" id="engine-badge">engine: stub</span>
+        <button id="reset" class="ghost" type="button">Chuỗi mới</button>
+      </div>
+    </header>
+
+    <section class="chat" id="chat" aria-live="polite"></section>
+
+    <div class="chips" id="chips" hidden></div>
+
+    <form class="composer" id="composer">
+      <input id="input" type="text" autocomplete="off" placeholder="Gõ câu hỏi… (VD: khi nào bắt đầu tính XP?)" required>
+      <button type="submit" id="send">Gửi</button>
+    </form>
+
+    <aside class="trace" id="trace">
+      <h2>Code kiểm · trace</h2>
+      <dl>
+        <dt>① history (2–3 tin trước)</dt><dd id="t-history">—</dd>
+        <dt>⑤ đã_hỏi_lại</dt><dd id="t-asked">false</dd>
+        <dt>② top-3 [DOC]</dt><dd id="t-top3">—</dd>
+        <dt>③ JSON AI trả về</dt><dd><pre id="t-json">—</pre></dd>
+        <dt>④⑤⑥ code quyết định</dt><dd id="t-route">—</dd>
+      </dl>
+    </aside>
+  </main>
+  <script type="module" src="app.js"></script>
+</body>
+</html>
