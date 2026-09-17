@@ -5,6 +5,12 @@ import { decide } from "./engine/index.js";
 const $ = (id) => document.getElementById(id);
 const chat = $("chat"), chips = $("chips"), input = $("input"), composer = $("composer");
 
+// Badge góc phải hiện đúng chế độ engine (hook trace của prompt.js): model thật hay adapter local (mock)
+globalThis.ASKONCE_TRACE = (t) => {
+  $("engine-badge").textContent = t.mode === "configured-model" ? `engine: ${t.model}` : "engine: local adapter (mock)";
+  if (t.error) console.warn("AI provider error:", t.error);
+};
+
 // ---- state của một chuỗi hỏi-đáp ----
 const state = {
   history: [],       // ① 2–3 tin gần nhất (cả học viên lẫn bot), cũ → mới
@@ -13,11 +19,12 @@ const state = {
   lastTop3: [],      // DOC đã tra, để điền mẫu ticket
 };
 
+// Dòng "Lý do chuyển TA" theo docs/mau-ticket-escalate.md (Hoàng soạn); correction lấy từ flow-v2.
 const REASON_TEXT = {
-  personal_data: "Câu này cần xem dữ liệu cá nhân (điểm, điểm danh của riêng bạn) — mình không tra được, TA sẽ hỗ trợ.",
-  no_source:     "Mình không tìm thấy quy định nào trong tài liệu khớp với câu hỏi, nên không tự trả lời để tránh sai.",
-  correction:    "Bạn báo câu trả lời trước chưa đúng — mình không đoán lại lần nữa mà chuyển TA kiểm tra.",
-  out_of_scope:  "Mình chỉ hỗ trợ các quy định của Build Phase (XP, điểm danh, hạn nộp, ticket…).",
+  no_source:     "Trợ lý chưa tìm thấy tài liệu nào nói đúng câu hỏi này, cần TA xác nhận trực tiếp.",
+  personal_data: "Đây là thông tin/sự cố riêng của bạn (điểm, điểm danh, tài khoản...), cần TA kiểm trên hệ thống.",
+  correction:    "Bạn báo câu trả lời trước chưa đúng — Trợ lý không đoán lại lần nữa, cần TA kiểm tra.",
+  out_of_scope:  "Câu hỏi ngoài phạm vi Trợ lý có thể trả lời (ví dụ quyết định của BTC), chuyển TA/BTC xử lý.",
 };
 
 function pushHistory(text) {
@@ -54,7 +61,7 @@ function route(res) {
     notes.push("⑤ đã_hỏi_lại=true mà vẫn CLARIFY → ép ESCALATE/no_source");
     label = "ESCALATE"; reason = "no_source";
   }
-  if (label === "ESCALATE") notes.push(`⑥ reason=${reason} → ${reason === "out_of_scope" ? "không kèm ticket" : "kèm mẫu ticket"}`);
+  if (label === "ESCALATE") notes.push(`⑥ reason=${reason} → kèm mẫu ticket`);
   if (!notes.length) notes.push(`${label} · AI và code đồng ý`);
   return { label, doc_id, reason, notes };
 }
@@ -75,16 +82,23 @@ function renderClarify(res) {
 }
 
 function renderEscalate(reason, question) {
+  // Nhóm chốt 17/9: mọi reason đều kèm mẫu ticket (kể cả out_of_scope = quyết định BTC/mentor), theo spec §6.
   let html = esc(REASON_TEXT[reason] || REASON_TEXT.no_source);
-  if (reason === "out_of_scope") return html + `<div class="end">Kết thúc · không tạo ticket</div>`;
+  // Khung theo docs/mau-ticket-escalate.md; thêm "Câu trả lời cũ" khi correction (flow-v2 ⑥)
   const ticket = [
-    "[Ticket TA] AskOnce chuyển tiếp",
-    `Câu hỏi: ${question}`,
-    `Đã tra: ${state.lastTop3.map((d) => d.id).join(", ") || "(không có)"}`,
-    `Câu trả lời cũ: ${state.lastAnswer || "(không có)"}`,
-    `Lý do: ${reason}`,
+    "[Ticket hỗ trợ — tạo tự động từ Trợ lý]",
+    "",
+    `Câu hỏi gốc: ${question}`,
+    "",
+    `Lý do chuyển TA: ${REASON_TEXT[reason]}`,
+    "",
+    `Đã tra: ${state.lastTop3.map((d) => d.id).join(", ") || "không tìm thấy tài liệu liên quan"}`,
+    ...(reason === "correction" && state.lastAnswer ? ["", `Câu trả lời cũ: ${state.lastAnswer}`] : []),
+    "",
+    "--- Học viên bổ sung thêm nếu cần ---",
+    "",
   ].join("\n");
-  html += `<div class="ticket"><div class="ticket-h">Mẫu ticket điền sẵn — bạn tự gửi vào #support</div><pre>${esc(ticket)}</pre>
+  html += `<div class="ticket"><div class="ticket-h">Mẫu ticket điền sẵn — sao chép rồi dán vào <code>/ticket create</code></div><pre>${esc(ticket)}</pre>
     <button type="button" class="ghost small" data-copy="${esc(ticket)}">Sao chép</button></div>
     <div class="end">Bạn tạo ticket · TA sẽ hỗ trợ</div>`;
   return html;
