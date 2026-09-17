@@ -24,6 +24,9 @@ Loại: [x] Tối ưu tính năng có sẵn  [ ] Tính năng mới
 
 ## §4. Thiết kế
 - Lát cắt MỘT CÂU (1 user · 1 việc · 1 quyết định AI · 1 kết quả): Một học viên K4 · hỏi bot một câu về quy định Build Phase · AI quyết định **trả lời ngay** (câu đã rõ và có căn cứ trong `kb/`), **hỏi lại đúng một câu** (thật sự thiếu thông tin), hoặc **chuyển TA** (không có căn cứ hoặc hỏi dữ liệu cá nhân) · học viên nhận câu trả lời có dẫn nguồn (DOC-xx) trong một lượt, không phải chọn menu 1/2/3.
+- Sơ đồ luồng (①–⑥, chỉ ③ là AI; bản gốc + bảng so sánh hai luồng cũ ở `docs/flow-v2.html`):
+
+  ![Sơ đồ luồng AskOnce v2](docs/flow-v2.png)
 - Non-goals (≥3 thứ KHÔNG build):
   1. Không hỗ trợ tạo/nộp ticket thay học viên — chỉ đưa mẫu điền sẵn (`docs/mau-ticket-escalate.md`), học viên tự xác nhận và gửi.
   2. Không hỏi lại quá 1 lần trong CLARIFY — lần 2 vẫn không rõ thì ép thành ESCALATE (chốt bằng code, không để LLM tự quyết định lặp).
