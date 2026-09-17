@@ -16,6 +16,13 @@ test("decide answers a grounded XP question", async () => {
   assert.ok(result.top3.some((document) => document.id === result.doc_id));
 });
 
+test("local adapter does not answer an unrelated question from top3[0]", async () => {
+  const result = await decide({ question: "Hôm nay ăn gì?" });
+  assert.equal(result.label, "ESCALATE");
+  assert.equal(result.reason, "out_of_scope");
+  assert.equal(result.doc_id, null);
+});
+
 test("verify rejects an ANSWER whose doc_id is outside top3", () => {
   const result = verifyDecision(
     { label: "ANSWER", doc_id: "DOC-09", answer: "Bịa" },

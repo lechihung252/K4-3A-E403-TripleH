@@ -78,18 +78,17 @@ function deterministicDecision({ question, history, askedOnce, top3 }) {
   }
 
   const combined = `${context} ${q}`;
-  const preferred = top3.find((document) => {
-    if (/daily|standup|yesterday|today/.test(combined)) return document.id === "DOC-03";
-    if (/ticket|ho tro/.test(combined)) return document.id === "DOC-04";
-    if (/mentor duty|bao cao mentor/.test(combined)) return document.id === "DOC-05";
-    if (/topic|de tai|project bank/.test(combined)) return document.id === "DOC-06";
-    if (/team|ghep nhom|lap nhom|cung level/.test(combined)) return document.id === "DOC-07";
-    if (/deadline|han nop|nop bai|nop lab|23:59|23h59/.test(combined)) return document.id === "DOC-08";
-    if (/rank|bang xep hang/.test(combined)) return document.id === "DOC-09";
-    if (/diem danh|attendance|qr|zoom/.test(combined)) return document.id === "DOC-02";
-    if (/xp|diem kinh nghiem|tinh diem|cong diem/.test(combined)) return document.id === "DOC-01";
-    return false;
-  }) || top3[0];
+  let preferredId = null;
+  if (/daily|standup|yesterday|today/.test(combined)) preferredId = "DOC-03";
+  else if (/ticket|ho tro/.test(combined)) preferredId = "DOC-04";
+  else if (/mentor duty|bao cao mentor/.test(combined)) preferredId = "DOC-05";
+  else if (/topic|de tai|project bank/.test(combined)) preferredId = "DOC-06";
+  else if (/ghep nhom|lap nhom|tao team|cung level/.test(combined)) preferredId = "DOC-07";
+  else if (/deadline|han nop|nop bai|nop lab|23:59|23h59/.test(combined)) preferredId = "DOC-08";
+  else if (/rank|bang xep hang/.test(combined)) preferredId = "DOC-09";
+  else if (/diem danh|attendance|qr|zoom/.test(combined)) preferredId = "DOC-02";
+  else if (/xp|diem kinh nghiem|tinh diem|cong diem/.test(combined)) preferredId = "DOC-01";
+  const preferred = preferredId ? top3.find((document) => document.id === preferredId) : null;
 
   if (preferred && ANSWERS[preferred.id]) {
     return { label: "ANSWER", doc_id: preferred.id, reason: null, question: null, answer: ANSWERS[preferred.id] };
