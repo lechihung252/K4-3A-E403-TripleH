@@ -19,8 +19,12 @@ Loại: [x] Tối ưu tính năng có sẵn  [ ] Tính năng mới
 - Ứng viên CHỌN + vì sao (bằng số):
 
 ## §3. Giải pháp tương tự đã nghiên cứu
-- [Sản phẩm 1]: flow / đáng học / đáng né / mình khác gì
-- [Sản phẩm 2]: ...
+- **NotebookLM** — Lê Chí Hùng thử 17/9, nguồn là 4 file `kb/` của nhóm (DOC-01, 02, 04, 08), 5 câu ứng với 3 nhánh + correction (ảnh: `validation/notebooklm-*.png`):
+  - *Flow:* upload tài liệu → hỏi tự do → trả lời dài có số cite [1][2] cạnh từng ý, bấm cite nhảy về đoạn gốc; cuối câu gợi ý 2–3 câu hỏi tiếp.
+  - *Đáng học:* (1) cite đặt **ngay sau từng ý**, không gom cuối bài — kiểm được từng câu; (2) tài liệu thiếu thì nói thẳng "chưa quy định" (câu "khi nào tính XP", "học bổng"), không bịa; (3) bị phản bác "sai rồi, XP tính từ tuần 2" nó **không đổi theo người dùng** — nói tài liệu không đề cập, nhắc lại nguồn, chỉ về kênh BTC.
+  - *Đáng né:* (1) câu mơ hồ "muộn sau 23h59" nó **không hỏi lại** mà tự chọn cách hiểu (daily standup) rồi trả lời một đoạn, cite DOC-01 trong khi DOC-08 mới nói về hạn 23:59 — đúng kiểu "tự tin sai nguồn" mà cost-of-error của nhóm sợ nhất; (2) câu ngoài phạm vi nó đề nghị **tìm trên internet** — với bot quy định khoá học, web không phải nguồn chính thức; (3) mọi kết thúc đều là "bạn tự đi kiểm tra / tự tạo ticket", không có bước chuyển người cụ thể.
+  - *Mình khác gì:* AskOnce không để AI tự quyết đã đủ nguồn chưa — code kiểm `doc_id ∈ top-3` sau AI (④); thiếu ngữ cảnh thì hỏi lại **đúng 1 câu** với gợi ý từ tài liệu thay vì đoán (⑤); không nguồn hoặc bị phản bác thì **chuyển TA kèm mẫu ticket điền sẵn** (câu hỏi, DOC đã tra, câu trả lời cũ) thay vì bảo học viên tự đi hỏi; và không bao giờ ra ngoài `kb/`.
+- [Sản phẩm 2 — Hoàng/Hưởng]: flow / đáng học / đáng né / mình khác gì
 
 ## §4. Thiết kế
 - Lát cắt MỘT CÂU (1 user · 1 việc · 1 quyết định AI · 1 kết quả): Một học viên K4 · hỏi bot một câu về quy định Build Phase · AI quyết định **trả lời ngay** (câu đã rõ và có căn cứ trong `kb/`), **hỏi lại đúng một câu** (thật sự thiếu thông tin), hoặc **chuyển TA** (không có căn cứ hoặc hỏi dữ liệu cá nhân) · học viên nhận câu trả lời có dẫn nguồn (DOC-xx) trong một lượt, không phải chọn menu 1/2/3.
