@@ -8,9 +8,9 @@
 
 | Họ và Tên | Mã Học Viên | Vai trò chính | Phần việc đảm nhiệm trong dự án |
 |---|---|---|---|
-| **Vũ Việt Hoàng** | Đội trưởng · Spec + Evidence | Nộp 5 checkpoint, viết `spec.md`; thu khảo sát lên ≥ 20 người; gán nhãn tay 63 menu (hỏi lại thừa / cần thiết) + ghi phương pháp đếm |
-| **Nguyễn Văn Hưởng** | Prompt + Eval | Lời gọi AI phân loại ANSWER / CLARIFY / ESCALATE; golden set ≥ 20 case từ `msg_id` thật; bảng kết quả trong `eval/` |
-| **Lê Chí Hùng** | Prototype + Validation | Giao diện demo; bộ thông báo nguồn (tự dựng, ghi rõ); phiên dùng thử với willing users, quote + nhật ký trong `validation/` |
+| **Vũ Việt Hoàng** | Đội trưởng | 2A202602398 | Spec + Evidence | Nộp 5 checkpoint, viết `spec.md`; thu khảo sát lên ≥ 20 người; gán nhãn tay 63 menu (hỏi lại thừa / cần thiết) + ghi phương pháp đếm
+| **Nguyễn Văn Hưởng** | Prompt + Eval | 2A202602743 |Lời gọi AI phân loại ANSWER / CLARIFY / ESCALATE; golden set ≥ 20 case từ `msg_id` thật; bảng kết quả trong `eval/` 
+| **Lê Chí Hùng** | Prototype + Validation | 2A202602863 | Giao diện demo; bộ thông báo nguồn (tự dựng, ghi rõ); phiên dùng thử với willing users, quote + nhật ký trong `validation/` 
 |  |  |  |  |
 
 > Nhóm copy nguyên file README này về repo của mình, rồi điền bảng trên. Cột **Phần việc đảm nhiệm** ghi càng cụ thể càng tốt.
