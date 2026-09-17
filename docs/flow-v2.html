@@ -1,0 +1,238 @@
+<title>AskOnce Flow v2</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+  :root {
+    --bg: #F5F7F9;
+    --ink: #1B2130;
+    --muted: #5C6675;
+    --line: #C9D0D9;
+    --surface: #FFFFFF;
+    --accent: #2F6FDE;
+    --accent-soft: #E3ECFB;
+    --end: #EAF2EC;
+    --end-stroke: #3D7A52;
+    --code-bg: #EDF0F4;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #12151B; --ink: #E6E9EF; --muted: #9AA3B2; --line: #343B47;
+      --surface: #1B1F27; --accent: #7AA6FF; --accent-soft: #1E2C48;
+      --end: #1B2A20; --end-stroke: #7FC493; --code-bg: #1B1F27;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #12151B; --ink: #E6E9EF; --muted: #9AA3B2; --line: #343B47;
+    --surface: #1B1F27; --accent: #7AA6FF; --accent-soft: #1E2C48;
+    --end: #1B2A20; --end-stroke: #7FC493; --code-bg: #1B1F27;
+  }
+  body {
+    background: var(--bg); color: var(--ink);
+    font-family: "IBM Plex Sans", "Segoe UI", Roboto, system-ui, sans-serif;
+    font-size: 15px; line-height: 1.55;
+    padding-block: 32px 64px; padding-inline: 16px;
+  }
+  main { max-width: 1040px; margin: 0 auto; }
+  header { margin-bottom: 20px; }
+  .eyebrow { font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+  h1 { font-size: 26px; font-weight: 600; margin: 4px 0 6px; text-wrap: balance; }
+  header p { margin: 0; color: var(--muted); max-width: 68ch; }
+  figure { margin: 0 0 28px; }
+  .frame { overflow-x: auto; border: 1px solid var(--line); border-radius: 6px; background: var(--surface); padding: 12px; }
+  svg { display: block; width: 100%; min-width: 760px; max-width: 1000px; height: auto; margin: 0 auto; color: var(--ink); font-family: inherit; }
+  figcaption { font-size: 13px; color: var(--muted); margin-top: 10px; max-width: 80ch; }
+  .box { fill: var(--surface); stroke: currentColor; stroke-width: 1.2; }
+  .ai { fill: var(--accent-soft); stroke: var(--accent); stroke-width: 1.6; }
+  .check { fill: var(--surface); stroke: currentColor; stroke-width: 1.2; stroke-dasharray: 4 3; }
+  .end { fill: var(--end); stroke: var(--end-stroke); stroke-width: 1.2; }
+  .flow { fill: none; stroke: currentColor; stroke-width: 1.2; }
+  .loop { fill: none; stroke: currentColor; stroke-width: 1.2; stroke-dasharray: 5 4; }
+  .t { fill: currentColor; font-size: 12px; }
+  .h { fill: currentColor; font-size: 13px; font-weight: 600; }
+  .s { fill: var(--muted); font-size: 11.5px; }
+  .lbl { fill: var(--muted); font-size: 11.5px; font-family: "IBM Plex Mono", ui-monospace, monospace; }
+  h2 { font-size: 17px; font-weight: 600; margin: 28px 0 10px; }
+  table { border-collapse: collapse; width: 100%; font-size: 14px; }
+  th, td { text-align: left; vertical-align: top; padding: 8px 10px; border-bottom: 1px solid var(--line); }
+  th { font-weight: 600; color: var(--muted); font-size: 12.5px; letter-spacing: .04em; text-transform: uppercase; }
+  td:first-child { white-space: nowrap; font-weight: 500; }
+  .tbl { overflow-x: auto; }
+  pre { background: var(--code-bg); border: 1px solid var(--line); border-radius: 6px; padding: 12px 14px; font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 12.5px; line-height: 1.5; overflow-x: auto; margin: 0; }
+  code { font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: .92em; }
+  ul { padding-left: 20px; margin: 0; }
+  li { margin-bottom: 4px; }
+  .cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
+</style>
+
+<main>
+  <header>
+    <div class="eyebrow">AskOnce · TripleH · Sơ đồ luồng v2</div>
+    <h1>Một câu hỏi, một lời gọi AI, một quyết định</h1>
+    <p>Kiến trúc lấy từ luồng 2 (tra tài liệu → AI trả JSON → code kiểm), thêm nhánh học viên phủ nhận từ luồng 1, và tách lý do ESCALATE. Số ①–⑥ là thứ tự chạy; chỉ ③ là AI.</p>
+  </header>
+
+  <figure>
+    <div class="frame">
+      <svg viewBox="0 0 1000 990" role="img" aria-label="Luồng AskOnce v2: nhận tin kèm ngữ cảnh, tra tài liệu lấy top-3, AI quyết định một lần trả JSON, rồi code kiểm nguồn trước khi ANSWER, kiểm cờ đã hỏi lại trước khi CLARIFY, và tách lý do trước khi ESCALATE; hai vòng quay về bước 1 khi học viên trả lời câu hỏi lại hoặc phủ nhận câu trả lời.">
+        <defs>
+          <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+            <path d="M0,0 L10,5 L0,10 z" fill="currentColor"/>
+          </marker>
+        </defs>
+
+        <!-- ① nhận tin -->
+        <rect class="box" x="280" y="20" width="440" height="64" rx="4"/>
+        <text class="h" x="500" y="42" text-anchor="middle">① Nhận tin · code</text>
+        <text class="s" x="500" y="59" text-anchor="middle">câu hỏi + 2–3 tin trước của cùng người trong kênh</text>
+        <text class="s" x="500" y="75" text-anchor="middle">kể cả menu 1/2/3 hoặc câu trả lời bot vừa gửi</text>
+        <line class="flow" x1="500" y1="84" x2="500" y2="112" marker-end="url(#arrow)"/>
+
+        <!-- ② tra kb -->
+        <rect class="box" x="280" y="116" width="440" height="64" rx="4"/>
+        <text class="h" x="500" y="138" text-anchor="middle">② Tra tài liệu kb/ · code</text>
+        <text class="s" x="500" y="155" text-anchor="middle">từ khoá + từ đồng nghĩa (điểm danh ≈ chuyên cần ≈ check-in)</text>
+        <text class="s" x="500" y="171" text-anchor="middle">→ top-3 đoạn, mỗi đoạn mang mã [DOC-xx]</text>
+        <line class="flow" x1="500" y1="180" x2="500" y2="204" marker-end="url(#arrow)"/>
+
+        <!-- ③ AI -->
+        <polygon class="ai" points="500,208 670,268 500,328 330,268"/>
+        <text class="h" x="500" y="256" text-anchor="middle">③ AI quyết định · 1 lời gọi</text>
+        <text class="s" x="500" y="273" text-anchor="middle">trả JSON {label, doc_id, reason, question}</text>
+        <text class="s" x="500" y="289" text-anchor="middle">label = ANSWER · CLARIFY · ESCALATE</text>
+
+        <!-- rẽ 3 nhánh -->
+        <polyline class="flow" points="500,328 500,356"/>
+        <polyline class="flow" points="170,356 830,356"/>
+        <line class="flow" x1="170" y1="356" x2="170" y2="386" marker-end="url(#arrow)"/>
+        <line class="flow" x1="830" y1="356" x2="830" y2="366" marker-end="url(#arrow)"/>
+        <line class="flow" x1="500" y1="356" x2="500" y2="494" marker-end="url(#arrow)"/>
+        <text class="lbl" x="335" y="348" text-anchor="middle">rõ + có nguồn</text>
+        <text class="lbl" x="665" y="348" text-anchor="middle">mơ hồ</text>
+        <text class="lbl" x="510" y="382">không nguồn · hỏi dữ liệu cá nhân</text>
+        <text class="lbl" x="510" y="398">ngoài phạm vi · phủ nhận câu trước</text>
+
+        <!-- cột ANSWER -->
+        <rect class="box" x="40" y="390" width="260" height="56" rx="4"/>
+        <text class="h" x="170" y="412" text-anchor="middle">ANSWER</text>
+        <text class="s" x="170" y="430" text-anchor="middle">trả lời đủ ý + dẫn [DOC-xx]</text>
+        <line class="flow" x1="170" y1="446" x2="170" y2="478" marker-end="url(#arrow)"/>
+
+        <polygon class="check" points="170,482 300,530 170,578 40,530"/>
+        <text class="t" x="170" y="527" text-anchor="middle">④ DOC-xx có trong top-3?</text>
+        <text class="s" x="170" y="544" text-anchor="middle">code kiểm, không tin AI</text>
+        <line class="flow" x1="170" y1="578" x2="170" y2="636" marker-end="url(#arrow)"/>
+        <text class="lbl" x="180" y="612">có</text>
+        <line class="flow" x1="300" y1="530" x2="376" y2="530" marker-end="url(#arrow)"/>
+        <text class="lbl" x="338" y="521" text-anchor="middle">không</text>
+        <text class="lbl" x="338" y="549" text-anchor="middle">→ no_source</text>
+
+        <rect class="end" x="40" y="640" width="260" height="52" rx="26"/>
+        <text class="t" x="170" y="670" text-anchor="middle">Có câu trả lời trong 1 lượt</text>
+
+        <!-- vòng phủ nhận -->
+        <polyline class="loop" points="40,666 12,666 12,52 276,52" marker-end="url(#arrow)"/>
+        <text class="lbl" x="144" y="44" text-anchor="middle">bảo "sai" → về ① kèm câu cũ</text>
+        <text class="lbl" x="40" y="714">học viên phủ nhận → quay về ①,</text>
+        <text class="lbl" x="40" y="730">③ chọn ESCALATE · correction</text>
+
+        <!-- cột ESCALATE -->
+        <rect class="box" x="380" y="498" width="240" height="64" rx="4"/>
+        <text class="h" x="500" y="520" text-anchor="middle">ESCALATE</text>
+        <text class="s" x="500" y="538" text-anchor="middle">nêu lý do rõ, không tự đoán</text>
+        <text class="s" x="500" y="554" text-anchor="middle">reason từ ③, hoặc từ ④ / ⑤</text>
+        <line class="flow" x1="500" y1="562" x2="500" y2="648" marker-end="url(#arrow)"/>
+
+        <polygon class="check" points="500,652 630,700 500,748 370,700"/>
+        <text class="t" x="500" y="697" text-anchor="middle">⑥ lý do gì?</text>
+        <text class="s" x="500" y="714" text-anchor="middle">code đọc reason</text>
+        <line class="flow" x1="500" y1="748" x2="500" y2="786" marker-end="url(#arrow)"/>
+        <text class="lbl" x="510" y="772">personal_data · no_source · correction</text>
+        <polyline class="flow" points="630,700 830,700 830,786" marker-end="url(#arrow)"/>
+        <text class="lbl" x="730" y="692" text-anchor="middle">out_of_scope</text>
+
+        <rect class="box" x="370" y="790" width="260" height="56" rx="4"/>
+        <text class="t" x="500" y="812" text-anchor="middle">Gửi lý do + mẫu ticket điền sẵn</text>
+        <text class="s" x="500" y="830" text-anchor="middle">câu hỏi · DOC đã tra · câu trả lời cũ nếu có</text>
+        <line class="flow" x1="500" y1="846" x2="500" y2="896" marker-end="url(#arrow)"/>
+        <rect class="end" x="370" y="900" width="260" height="52" rx="26"/>
+        <text class="t" x="500" y="922" text-anchor="middle">Học viên tự tạo ticket</text>
+        <text class="s" x="500" y="939" text-anchor="middle">biết TA sẽ hỗ trợ</text>
+
+        <rect class="box" x="690" y="790" width="280" height="56" rx="4"/>
+        <text class="t" x="830" y="812" text-anchor="middle">Chỉ hỗ trợ quy định Build Phase</text>
+        <text class="s" x="830" y="830" text-anchor="middle">không kèm mẫu ticket</text>
+        <line class="flow" x1="830" y1="846" x2="830" y2="896" marker-end="url(#arrow)"/>
+        <rect class="end" x="690" y="900" width="280" height="52" rx="26"/>
+        <text class="t" x="830" y="930" text-anchor="middle">Kết thúc · không tạo ticket</text>
+
+        <!-- cột CLARIFY -->
+        <polygon class="check" points="830,370 970,418 830,466 690,418"/>
+        <text class="t" x="830" y="415" text-anchor="middle">⑤ đã hỏi lại trong chuỗi này?</text>
+        <text class="s" x="830" y="432" text-anchor="middle">code đọc cờ đã_hỏi_lại</text>
+        <polyline class="flow" points="690,418 650,418 650,530 624,530" marker-end="url(#arrow)"/>
+        <text class="lbl" x="668" y="410" text-anchor="middle">rồi</text>
+        <text class="lbl" x="656" y="480">vẫn mơ hồ</text>
+        <line class="flow" x1="830" y1="466" x2="830" y2="496" marker-end="url(#arrow)"/>
+        <text class="lbl" x="840" y="486">chưa</text>
+
+        <rect class="box" x="690" y="500" width="280" height="80" rx="4"/>
+        <text class="h" x="830" y="522" text-anchor="middle">CLARIFY · gửi đúng 1 câu</text>
+        <text class="s" x="830" y="540" text-anchor="middle">1 câu tự nhiên, ≤3 gợi ý lấy từ top-3 [DOC]</text>
+        <text class="s" x="830" y="556" text-anchor="middle">cho gõ tự do · không phải list 1/2/3</text>
+        <text class="s" x="830" y="572" text-anchor="middle">đặt cờ đã_hỏi_lại = true</text>
+        <line class="flow" x1="830" y1="580" x2="830" y2="616" marker-end="url(#arrow)"/>
+
+        <rect class="box" x="690" y="620" width="280" height="52" rx="4"/>
+        <text class="t" x="830" y="641" text-anchor="middle">Học viên trả lời</text>
+        <text class="s" x="830" y="659" text-anchor="middle">gõ tự do hoặc chọn một gợi ý</text>
+
+        <!-- vòng về ① -->
+        <polyline class="loop" points="970,646 990,646 990,52 724,52" marker-end="url(#arrow)"/>
+        <text class="lbl" x="858" y="44" text-anchor="middle">về ① kèm câu trả lời</text>
+      </svg>
+    </div>
+    <figcaption>Khối viền liền = bước code; hình thoi xanh = lời gọi AI duy nhất; hình thoi nét đứt = code kiểm sau AI; ô bo tròn = trạng thái kết thúc; đường nét đứt = quay về ①. Không có đường nào cho phép hỏi lại lần 2 hay trả lời không kèm DOC.</figcaption>
+  </figure>
+
+  <h2>Đổi gì so với hai luồng cũ</h2>
+  <div class="tbl">
+    <table>
+      <thead><tr><th>Chỗ</th><th>Trước</th><th>Luồng v2</th><th>Vì sao</th></tr></thead>
+      <tbody>
+        <tr><td>Nguồn</td><td>Luồng 1 không tra nguồn; ANSWER dựa vào "câu rõ"</td><td>② tra kb/ trước, ④ code kiểm DOC-xx ∈ top-3</td><td>Cost-of-error: sai điểm danh/XP là mất điểm; chặn trước khi tới học viên</td></tr>
+        <tr><td>Hỏi lại</td><td>Luồng 1 hỏi lại được 2 lần (CLARIFY + "nhập thêm ngữ cảnh")</td><td>⑤ cờ <code>đã_hỏi_lại</code> trong code, lần 2 → ESCALATE</td><td>Canvas chốt "tối đa 1 câu"; không phụ thuộc LLM nhớ</td></tr>
+        <tr><td>CLARIFY</td><td>Luồng 2: "≤3 lựa chọn" dễ bị hiểu là menu 1/2/3</td><td>1 câu tự nhiên, gợi ý lấy từ top-3 DOC vừa tra, cho gõ tự do</td><td>Khác bot cũ ở chỗ gợi ý có căn cứ và chỉ hiện khi thật sự mơ hồ</td></tr>
+        <tr><td>Correction</td><td>Luồng 2 thiếu; luồng 1 có "học viên thấy đúng?"</td><td>Học viên phủ nhận → về ① kèm câu cũ → ③ ESCALATE <code>correction</code>, không trả lời lại lần 2</td><td>Spec §6 bắt buộc; tránh AI "cãi" bằng câu bịa thứ hai</td></tr>
+        <tr><td>Lý do ESCALATE</td><td>Luồng 2 gộp "không nguồn / cá nhân" vào 1 nhánh</td><td>⑥ tách 4 reason; <code>out_of_scope</code> không kèm ticket</td><td>R03 hỏi điểm cá nhân cần ticket TA; chit-chat thì không</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="cols">
+    <div>
+      <h2>JSON ③ trả về</h2>
+      <pre>{
+  "label":    "ANSWER" | "CLARIFY" | "ESCALATE",
+  "doc_id":   "DOC-07" | null,      // bắt buộc khi ANSWER
+  "reason":   "personal_data" | "no_source"
+            | "out_of_scope"  | "correction" | null,
+  "question": "..." | null,         // bắt buộc khi CLARIFY
+  "answer":   "..." | null
+}</pre>
+    </div>
+    <div>
+      <h2>Non-goals (giữ nguyên cho spec §4)</h2>
+      <ul>
+        <li>Không tự tạo ticket thay học viên — chỉ đưa mẫu điền sẵn.</li>
+        <li>Không hỏi lại lần 2 trong cùng chuỗi, kể cả khi vẫn mơ hồ.</li>
+        <li>Không trả lời khi không có DOC-xx trong top-3, kể cả khi AI "tự tin".</li>
+        <li>Không tra dữ liệu cá nhân (điểm, điểm danh của từng người).</li>
+      </ul>
+      <h2>Golden set nên có nhóm case</h2>
+      <ul>
+        <li>Câu đúng, có nguồn nhưng lệch từ khoá — đo tỉ lệ ESCALATE thừa ở ②.</li>
+        <li>Học viên trả lời "cái hai" sau menu bot cũ — ① phải ghép được ngữ cảnh.</li>
+        <li>Phủ nhận câu ANSWER — ③ phải ra <code>correction</code>, không ANSWER lại.</li>
+      </ul>
+    </div>
+  </div>
+</main>
