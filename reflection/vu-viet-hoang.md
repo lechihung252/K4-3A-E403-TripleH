@@ -6,7 +6,9 @@
 
 Tôi là **đội trưởng**, phụ trách **Spec + Evidence**: nộp cả 5 checkpoint, giữ `spec.md`, `kb/`, `docs/` không để ai đụng chéo (đúng nguyên tắc chia theo thư mục để tránh conflict git), thu bằng chứng (mining, gán nhãn tay, khảo sát) và khoá quality bar dựa trên số thật.
 
-Ở CP1 tôi là người đề xuất ý tưởng AskOnce và bảo vệ hướng đi này trong buổi thảo luận nhóm. Ở CP2 tôi vẽ workflow đầu tiên (tra tài liệu trước → AI quyết định → kiểm lại bằng code), sau đó cả nhóm cùng góp ý và Hùng dựng thành sơ đồ chính thức `docs/flow-v2.html`/`flow-v2.png` — bản v2 giữ đúng khung 3 nhánh ANSWER/CLARIFY/ESCALATE tôi đề xuất, thêm nhánh Correction và bước kiểm nguồn bằng code sau AI mà nhóm bổ sung khi thảo luận. Nhận vai trò này vì tôi là người theo sát nhất phần "đạt là gì" của sản phẩm — quality bar, evidence, chuẩn nghiệm thu — thay vì phần code.
+Ở CP1 tôi là người đề xuất ý tưởng AskOnce: thay vì xây một tính năng mới, tối ưu thẳng bot "Trợ lý" đang có, nhắm đúng vào việc nó trả menu 1/2/3 bắt chọn lại ngữ cảnh cho cả câu đã đủ rõ. Ý tưởng này bị phản biện ở hai điểm: (1) "tối ưu bot có sẵn" nghe nhỏ hơn xây tính năng mới, sợ giám khảo đánh giá thấp độ khó; (2) chưa chắc menu 1/2/3 là vấn đề thật hay chỉ là cảm giác chủ quan. Tôi bảo vệ bằng cách đưa ngay bằng chứng B (mining `discord-pack`) làm căn cứ trước khi tranh luận thêm — 63/313 (20%) câu trả lời của bot là menu hỏi lại, 53/61 người phải nhắn thêm trong 30 phút, có người tag bot ≥3 lần vẫn chưa xong việc; và chốt cost-of-error rõ ràng (trả sai XP/điểm danh đắt hơn hỏi lại thừa, nhưng 20% hỏi lại thừa cũng đang thật sự gây mất thời gian) để nhóm thấy đây là lát cắt có số đo được, khả thi trong ~48h, chứ không phải phỏng đoán. Nhóm đồng ý chốt theo hướng "tối ưu tính năng có sẵn" (đánh dấu ngay trên `spec.md` dòng 3) thay vì xây tính năng mới.
+
+Ở CP2 tôi vẽ workflow đầu tiên: tra tài liệu trước → AI quyết định ANSWER/CLARIFY/ESCALATE → kiểm lại bằng code sau khi AI trả lời, thay vì để AI tự do trả lời hoặc tự quyết đã đủ nguồn chưa. Sau đó cả nhóm góp ý và Hùng dựng thành sơ đồ chính thức `docs/flow-v2.html`/`flow-v2.png` (6 bước ①–⑥, chỉ ③ là AI) — bản v2 giữ đúng khung 3 nhánh tôi đề xuất, nhóm bổ sung thêm nhánh Correction (⑥, khi học viên phản hồi câu trả lời sai) và cờ `askedOnce` để chặn CLARIFY hỏi lại quá 1 lần bằng code thay vì trông chờ AI tự nhớ. Nhận vai trò Spec + Evidence vì tôi là người theo sát nhất phần "đạt là gì" của sản phẩm — quality bar, bằng chứng, chuẩn nghiệm thu — thay vì phần code.
 
 ## 2. Phần mình đã làm
 
@@ -25,10 +27,10 @@ Tôi là **đội trưởng**, phụ trách **Spec + Evidence**: nộp cả 5 ch
 
 ## 3. AI đã hỗ trợ mình thế nào
 
-- **Tool đã dùng:** **[điền: Claude Code / ChatGPT / Gemini — công cụ thật đã dùng]**
-- **Dùng ở bước nào, cho việc gì:** **[điền — ví dụ: soạn nháp 9 file `DOC-xx.md` từ `discord-pack` rồi tự biên tập lại; hỗ trợ viết `docs/nhan-tay-63-menu.md` (bảng mã lý do R1-R7); gom số liệu rải rác thành bảng §1/§7 trong spec]**
-- **Chỗ AI làm tốt:** **[điền — ví dụ: tổng hợp nhanh câu hỏi hay gặp trong `discord-pack` thành cấu trúc DOC theo chủ đề, viết bảng đối chiếu số liệu]**
-- **Chỗ AI làm sai hoặc mình phải tự kiểm/tự sửa (≥1 ví dụ cụ thể):** **[điền — ví dụ: AI gán nhãn mẫu ban đầu theo cảm tính thay vì theo tiêu chí "câu hỏi đã đủ rõ chưa", phải tự đọc lại và sửa tay theo phương pháp R1-R7; hoặc AI viết `kb/DOC-xx.md` lẫn thông tin không có trong nguồn `discord-pack`, phải cắt bỏ để không tạo evidence giả]**
+- **Tool đã dùng:** Claude Code (VS Code), dùng xuyên suốt quá trình làm việc: `kb/`, `docs/`  và ghép `spec.md`.
+- **Dùng ở bước nào, cho việc gì:** soạn khung 9 file `DOC-xx.md` từ nội dung tôi tự rút ra khi đọc `discord-pack` (tôi đưa chủ đề + nội dung thật, tham khảo nội dung trả lời từ trả lời discord, AI giúp viết lại thành định dạng `id/title/keywords` thống nhất cho `retrieve.js` đọc được); dựng bảng mã lý do R1-R7 và cấu trúc phương pháp đếm trong `docs/nhan-tay-63-menu.md`; gom số liệu rải rác ở nhiều file (`canvas-cp1.md`, `docs/menu-labels.csv`, `eval/`) thành các bảng ở §1 §2 §7 trong `spec.md`.
+- **Chỗ AI làm tốt:** viết nhanh phần định dạng (9 file `DOC-xx.md` cùng khung, bảng mã R1-R7), và tổng hợp số liệu rải rác trong repo thành bảng có trích dẫn nguồn thay vì phải gõ tay từng dòng.
+- **Chỗ AI làm sai hoặc mình phải tự kiểm/tự sửa:** ở bảng impact §2, lượt đầu AI viết ước lượng "bao nhiêu người/tần suất" nghe hợp lý nhưng suy diễn vượt quá những gì `docs/menu-labels.csv` thực sự đếm được (file đó không tách cột chủ đề) — nếu để nguyên sẽ thành số bịa trong đúng phần "Evidence" là trách nhiệm của tôi. Tôi phải tự sửa lại thành ghi rõ "ước lượng theo tỷ trọng câu hỏi quan sát được, không phải đếm chính xác từng DOC" ngay trong bảng, thay vì để con số trông như đã đếm chính xác.
 - **Cách mình kiểm tra output của AI trước khi đưa vào repo:** mọi con số trong `spec.md` phải trỏ được về một file cụ thể (`docs/`, `eval/`) — cái nào AI viết mà không có nguồn kiểm lại được thì bỏ, không đưa vào evidence. Với `kb/DOC-xx.md`, đối chiếu lại với `discord-pack` gốc trước khi commit, không giữ nguyên bản AI viết nếu không tự xác minh được.
 
 ## 4. Một bài học từ case fail của chính nhóm
@@ -43,4 +45,6 @@ Tôi là **đội trưởng**, phụ trách **Spec + Evidence**: nộp cả 5 ch
 
 ## 5. Nếu làm lại / có thêm 1 tuần
 
-- **[điền: ví dụ — thu khảo sát A sớm và rộng hơn ngay từ CP1 thay vì để n=5 kéo dài đến gần CP4 (mục tiêu ≥20 vẫn chưa đạt khi chốt spec); hoặc đối chiếu lần 2 (người thứ hai kiểm) cho toàn bộ case `do_chac = thấp` trong gán nhãn tay thay vì một phần.]**
+- Thu khảo sát A sớm và rộng hơn ngay từ tối CP1, thay vì để n=5/mục tiêu ≥20 kéo dài đến gần CP4 mà vẫn chưa đạt khi chốt spec — đây là chỗ tôi tự khai "chưa xong" và là phần yếu nhất trong bằng chứng của mình.
+- Đối chiếu lần 2 (người thứ hai trong nhóm kiểm lại) cho toàn bộ case `do_chac = thấp` trong gán nhãn tay 64 menu, thay vì chỉ làm được một phần do chạy deadline CP3/CP4 sát nhau.
+- Commit/push ngay sau mỗi lần cập nhật `kb/`, không gom để cuối buổi — tránh lặp lại sự cố mất dữ liệu quan sát bot thật (đã ghi trong "Tự khai phần chưa xong" của `spec.md`) khi thao tác lại repo.
