@@ -26,6 +26,8 @@ Không có build step. HTML + JS thuần (`type="module"`), nên phải chạy q
 
 UI chỉ gọi `decide({ question, history, askedOnce })` và không biết gì về prompt hay kb/. `app.js` kiểm lại ④⑤ một lần nữa phía UI và làm ⑥ (đọc reason → mẫu ticket).
 
+Một **chuỗi** = một câu hỏi cho tới khi ra ANSWER hoặc ESCALATE; chỉ CLARIFY mới kéo dài chuỗi. Khi chuỗi đóng, `app.js` tự hạ cờ `askedOnce` nên học viên hỏi câu tiếp theo liền, không cần bấm "Chuỗi mới" (nút này chỉ để xoá màn hình chat). `history` 2–3 tin vẫn giữ qua các chuỗi để bắt "Sai rồi" / "cái hai".
+
 ## Phần nào mock, phần nào thật
 
 | Thành phần | Trạng thái | Ghi chú |
