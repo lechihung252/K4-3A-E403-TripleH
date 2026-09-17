@@ -40,6 +40,9 @@ const answerSourceFailures = results.filter((result) => result.actual?.label ===
 const labelCounts = Object.fromEntries(["ANSWER", "CLARIFY", "ESCALATE"].map((label) => [label, results.filter((result) => result.actual?.label === label).length]));
 const observedTrace = results.find((result) => result.model_trace?.[0])?.model_trace[0] || {};
 const observedMode = observedTrace.mode || "unknown";
+const guardrailApplied = results.filter((result) =>
+  result.model_trace?.some((entry) => entry.guardrail)
+).length;
 const summary = {
   run: runName,
   generated_at: now.toISOString(),
@@ -51,6 +54,7 @@ const summary = {
   failed: results.length - passed,
   accuracy: Number((passed / results.length * 100).toFixed(1)),
   answer_source_failures: answerSourceFailures,
+  guardrail_applied: guardrailApplied,
   actual_labels: labelCounts,
 };
 
@@ -60,7 +64,7 @@ const failedRows = results.filter((result) => !result.pass).map((result) =>
   `| ${result.id} | ${result.msg_id} | ${result.expected.label}${result.expected.doc_id ? `/${result.expected.doc_id}` : ""} | ${result.actual ? `${result.actual.label}${result.actual.doc_id ? `/${result.actual.doc_id}` : ""}` : "ERROR"} | ${result.error ? result.error.split("\n")[0] : Object.entries(result.checks).filter(([, ok]) => !ok).map(([name]) => name).join(", ")} |`
 );
 const report = `# ${runName} — Kết quả AskOnce\n\n` +
-  `- Thời gian: ${summary.generated_at}\n- Chế độ: \`${summary.mode}\`\n- Provider: \`${summary.provider}\`\n- Model: \`${summary.model || "n/a"}\`\n- Kết quả: **${passed}/${results.length} (${summary.accuracy}%)**\n- ANSWER sai nguồn: **${answerSourceFailures}**\n- Nhãn đầu ra: ANSWER ${labelCounts.ANSWER} · CLARIFY ${labelCounts.CLARIFY} · ESCALATE ${labelCounts.ESCALATE}\n\n` +
+  `- Thời gian: ${summary.generated_at}\n- Chế độ: \`${summary.mode}\`\n- Provider: \`${summary.provider}\`\n- Model: \`${summary.model || "n/a"}\`\n- Kết quả: **${passed}/${results.length} (${summary.accuracy}%)**\n- ANSWER sai nguồn: **${answerSourceFailures}**\n- Guardrail áp dụng: **${guardrailApplied}**\n- Nhãn đầu ra: ANSWER ${labelCounts.ANSWER} · CLARIFY ${labelCounts.CLARIFY} · ESCALATE ${labelCounts.ESCALATE}\n\n` +
   `## Case sai\n\n` +
   (failedRows.length ? `| # | msg_id | Kỳ vọng | Thực tế | Lỗi |\n|---:|---|---|---|---|\n${failedRows.join("\n")}\n` : "Không có case sai trong lượt chạy này.\n") +
   `\n## Khả năng kiểm tra lại\n\nToàn bộ input, top-3, output, từng tiêu chí pass/fail và thời gian chạy nằm tại \`eval/trace/${runName}.jsonl\`.\n`;

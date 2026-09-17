@@ -1,21 +1,47 @@
 import { normalize } from "./retrieve.js";
 
-const SYSTEM_PROMPT = `Bạn là lõi quyết định của AskOnce, trợ lý quy định Build Phase.
-Chọn đúng một nhãn:
-- ANSWER: câu hỏi rõ và câu trả lời được chứng minh hoàn toàn bởi một tài liệu trong top3.
-- CLARIFY: thiếu đúng một thông tin quan trọng; chỉ hỏi lại một câu ngắn.
-- ESCALATE: cần dữ liệu cá nhân, không có nguồn, ngoài phạm vi, hoặc người dùng báo câu trước sai.
+const SYSTEM_PROMPT = `# Vai trò
+Bạn là lõi quyết định của AskOnce, trợ lý chỉ dùng tài liệu được truy xuất để hỗ trợ học viên trong Build Phase.
 
-Luật bắt buộc:
-1. Chỉ ANSWER với doc_id có trong top3. Không dùng kiến thức ngoài top3.
-2. Dữ liệu/sự cố riêng của học viên => ESCALATE/personal_data.
-3. Người dùng báo câu trước sai => ESCALATE/correction.
-4. Ngoài quy định Build Phase => ESCALATE/out_of_scope.
-5. Không có tài liệu đủ căn cứ => ESCALATE/no_source.
-6. Trả đúng một JSON object, không markdown, đủ 6 khóa:
-{"label":"ANSWER|CLARIFY|ESCALATE","doc_id":"DOC-xx|null","reason":"personal_data|no_source|out_of_scope|correction|null","question":"string|null","answer":"string|null"}
+# Ba nhãn
+- ANSWER: câu hỏi đã đủ rõ và mọi khẳng định trong câu trả lời đều có căn cứ trong top3.
+- CLARIFY: câu hỏi thuộc ngữ cảnh Build Phase nhưng thiếu đúng một thông tin quan trọng; hỏi lại đúng một câu ngắn.
+- ESCALATE: cần tra dữ liệu/sự cố cá nhân, người dùng báo câu trước sai, không có nguồn phù hợp, hoặc yêu cầu nằm ngoài phạm vi tài liệu.
 
-Nếu ANSWER, trả lời ngắn bằng tiếng Việt và kết thúc bằng [DOC-xx].`;
+# Thứ tự ra quyết định
+Thực hiện lần lượt các bước sau, chọn nhãn đầu tiên phù hợp:
+1. Nếu người dùng phủ nhận hoặc báo câu trả lời trước sai, chọn ESCALATE/correction.
+2. Nếu yêu cầu cần xem hồ sơ, tài khoản, nhóm, điểm, điểm danh hoặc trạng thái riêng của người hỏi, chọn ESCALATE/personal_data. Việc top3 có hướng dẫn chung hoặc hướng dẫn mở ticket không biến sự cố cá nhân thành ANSWER.
+3. Nếu thiếu một đối tượng/tham chiếu mà các cách hiểu sẽ dẫn đến câu trả lời khác nhau, chọn CLARIFY. Ví dụ: chỉ nói "muộn sau 23h59", "phase 1, 2, 3", "điểm cộng trên lớp", "danh sách giảng viên hỗ trợ", hoặc báo không đăng nhập được nhưng chưa nêu lỗi. Khi askedOnce=true, không được CLARIFY lần hai; chọn ESCALATE/no_source.
+4. Nếu câu hỏi đủ rõ, chỉ ANSWER bằng thông tin trong top3. Không dùng kiến thức bên ngoài, không tự suy đoán.
+5. Nếu câu hỏi vẫn thuộc một chủ đề chương trình nhưng top3 không đủ căn cứ, chọn ESCALATE/no_source. Nếu yêu cầu là quyết định vận hành hoặc tài nguyên không nằm trong phạm vi tài liệu (ví dụ BTC có cấp thiết bị phần cứng hay không), chọn ESCALATE/out_of_scope. Câu hỏi đời sống không liên quan Build Phase cũng là out_of_scope.
+
+# Chọn nguồn khi ANSWER
+- doc_id phải là ID có trong top3 và là nguồn chính cho ý định chính của câu hỏi.
+- Nếu câu hỏi có nhiều ý, ưu tiên ý được hỏi trước để chọn doc_id; chỉ tổng hợp ý còn lại khi cũng được top3 chứng minh.
+- Trả lời ngắn bằng tiếng Việt. Gắn [DOC-xx] ngay sau thông tin lấy từ tài liệu tương ứng; không bịa nguồn.
+
+# Phân biệt reason
+- personal_data: phải kiểm tra trường hợp/hồ sơ riêng, ví dụ chưa được cộng XP, phân nhóm của mình, xác nhận điểm cá nhân.
+- no_source: chủ đề chương trình có thể hiểu rõ nhưng tài liệu truy xuất không đủ để trả lời.
+- out_of_scope: yêu cầu ngoài phạm vi chính sách/tài liệu mà AskOnce xử lý.
+- correction: người dùng nói câu trả lời trước sai.
+
+# Ví dụ phân loại
+- "Mình không thấy nhóm được xếp" => ESCALATE/personal_data.
+- "Phoenix không đăng nhập được" và askedOnce=false => CLARIFY, hỏi lỗi đang hiển thị.
+- "Muộn sau 23h59 thì sao?" => CLARIFY, hỏi đang nói nộp Lab, vào lớp hay việc khác.
+- "Điểm nào ảnh hưởng tới thực tập?" => ESCALATE/no_source.
+- "BTC có cấp thiết bị cho đề tài phần cứng không?" => ESCALATE/out_of_scope.
+- "Daily standup ở đâu và cách tăng XP?" => ANSWER, lấy daily standup (ý đầu tiên) làm nguồn chính nếu DOC-03 có trong top3.
+
+# Ràng buộc đầu ra
+Trả đúng object theo JSON schema do API cung cấp. Không markdown, không thêm khóa. Các trường không áp dụng phải là null:
+- ANSWER: doc_id và answer khác null; reason và question là null.
+- CLARIFY: question khác null; doc_id, reason và answer là null.
+- ESCALATE: reason khác null; doc_id, question và answer là null.
+
+Trước khi xuất JSON, tự kiểm tra lại thứ tự quyết định, nguồn và các trường null.`;
 
 const ANSWERS = {
   "DOC-01": "XP được tính theo từng cá nhân qua các hoạt động Build Phase được công bố; mức XP tùy từng hoạt động. Nếu XP chưa được cộng sau 24 giờ, bạn nên mở ticket hỗ trợ. [DOC-01]",
@@ -33,13 +59,15 @@ function includesAny(text, expressions) {
   return expressions.some((expression) => expression.test(text));
 }
 
-function deterministicDecision({ question, history, askedOnce, top3 }) {
+function policyGuardrail({ question, history, askedOnce }) {
   const q = normalize(question);
   const rawQuestion = String(question).toLowerCase();
-  const context = normalize(history.join(" "));
 
   if (history.length > 0 && includesAny(q, [/^sai( roi)?$/, /khong dung/, /khong phai/, /tra loi sai/, /chua dung y/])) {
-    return { label: "ESCALATE", doc_id: null, reason: "correction", question: null, answer: null };
+    return {
+      rule: "correction",
+      output: { label: "ESCALATE", doc_id: null, reason: "correction", question: null, answer: null },
+    };
   }
 
   const isPersonal = includesAny(q, [
@@ -48,16 +76,25 @@ function deterministicDecision({ question, history, askedOnce, top3 }) {
     /\b(xac nhan.*diem|hoat dong.*chua.*xp)\b/,
   ]);
   if (isPersonal) {
-    return { label: "ESCALATE", doc_id: null, reason: "personal_data", question: null, answer: null };
+    return {
+      rule: "personal_data",
+      output: { label: "ESCALATE", doc_id: null, reason: "personal_data", question: null, answer: null },
+    };
   }
 
   // These decisions are not stated in any retrieved document. Similar words in a
   // document must never be treated as evidence for an answer.
   if (/\bthuc tap\b/.test(q)) {
-    return { label: "ESCALATE", doc_id: null, reason: "no_source", question: null, answer: null };
+    return {
+      rule: "known_no_source",
+      output: { label: "ESCALATE", doc_id: null, reason: "no_source", question: null, answer: null },
+    };
   }
   if (/\bphan cung\b/.test(q) && /\b(tu chuan bi|btc cap|thiet bi)\b/.test(q)) {
-    return { label: "ESCALATE", doc_id: null, reason: "out_of_scope", question: null, answer: null };
+    return {
+      rule: "known_out_of_scope",
+      output: { label: "ESCALATE", doc_id: null, reason: "out_of_scope", question: null, answer: null },
+    };
   }
 
   const mentionsLate = /muộn|trễ|23:59|23h59/.test(rawQuestion) || /\btre\b/.test(q);
@@ -68,14 +105,32 @@ function deterministicDecision({ question, history, askedOnce, top3 }) {
     (/\b(giang vien|nguoi ho tro)\b/.test(q) && !/\b(lop|phong|mon|mentor)\b/.test(q)) ||
     (/\bkhong dang nhap duoc\b/.test(q) && !/\b(loi|ma loi|quen mat khau)\b/.test(q));
   if (ambiguous) {
-    if (askedOnce) return { label: "ESCALATE", doc_id: null, reason: "no_source", question: null, answer: null };
+    if (askedOnce) {
+      return {
+        rule: "clarification_limit",
+        output: { label: "ESCALATE", doc_id: null, reason: "no_source", question: null, answer: null },
+      };
+    }
     let followUp = "Bạn có thể nói rõ bạn đang hỏi về hoạt động hoặc hệ thống nào không?";
     if (mentionsLate) followUp = "Bạn đang hỏi nộp Lab muộn, vào lớp muộn, hay một việc khác?";
     else if (/diem cong|xem diem/.test(q)) followUp = "Bạn muốn xem XP, điểm Lab hay điểm trên VLearn?";
     else if (/giang vien|nguoi ho tro/.test(q)) followUp = "Bạn cần danh sách hỗ trợ của lớp hoặc phòng học nào?";
     else if (/khong dang nhap/.test(q)) followUp = "Phoenix đang hiện lỗi gì khi bạn đăng nhập?";
-    return { label: "CLARIFY", doc_id: null, reason: null, question: followUp, answer: null };
+    return {
+      rule: "missing_context",
+      output: { label: "CLARIFY", doc_id: null, reason: null, question: followUp, answer: null },
+    };
   }
+
+  return null;
+}
+
+function deterministicDecision({ question, history, askedOnce, top3 }) {
+  const guardrail = policyGuardrail({ question, history, askedOnce });
+  if (guardrail) return guardrail.output;
+
+  const q = normalize(question);
+  const context = normalize(history.join(" "));
 
   const combined = `${context} ${q}`;
   let preferredId = null;
@@ -144,7 +199,14 @@ async function callOpenAICompatible(config, payload) {
     body: JSON.stringify({
       model: config.model,
       temperature: 0,
-      response_format: { type: "json_object" },
+      response_format: {
+        type: "json_schema",
+        json_schema: {
+          name: "askonce_decision",
+          strict: true,
+          schema: DECISION_SCHEMA,
+        },
+      },
       messages: [
         { role: "system", content: SYSTEM_PROMPT },
         { role: "user", content: JSON.stringify(payload) },
@@ -214,8 +276,15 @@ export async function decideWithModel(input) {
   };
   try {
     const provider = String(config.provider || "openai").toLowerCase();
-    const output = await callConfiguredProvider(config, payload);
-    globalThis.ASKONCE_TRACE?.({ mode: "configured-model", provider, model: config.model, input: payload, output });
+    const modelOutput = await callConfiguredProvider(config, payload);
+    const guardrail = policyGuardrail(input);
+    const output = guardrail?.output || modelOutput;
+    globalThis.ASKONCE_TRACE?.({
+      mode: "configured-model", provider, model: config.model, input: payload,
+      model_output: modelOutput,
+      guardrail: guardrail?.rule || null,
+      output,
+    });
     return output;
   } catch (error) {
     // A provider outage or malformed JSON is a no-source outcome, never permission
@@ -228,4 +297,4 @@ export async function decideWithModel(input) {
   }
 }
 
-export { SYSTEM_PROMPT, DECISION_SCHEMA, deterministicDecision, extractJson };
+export { SYSTEM_PROMPT, DECISION_SCHEMA, deterministicDecision, extractJson, policyGuardrail };

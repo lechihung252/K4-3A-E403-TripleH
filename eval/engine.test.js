@@ -46,6 +46,14 @@ test("verify rejects an ANSWER whose doc_id is outside top3", () => {
   });
 });
 
+test("verify appends the selected source when the model omits its citation", () => {
+  const result = verifyDecision(
+    { label: "ANSWER", doc_id: "DOC-01", answer: "XP tính theo cá nhân." },
+    { top3: [{ id: "DOC-01", title: "XP", snippet: "..." }] },
+  );
+  assert.equal(result.answer, "XP tính theo cá nhân. [DOC-01]");
+});
+
 test("verify never asks a second clarification", () => {
   const result = verifyDecision(
     { label: "CLARIFY", question: "Bạn hỏi gì?" },
@@ -68,6 +76,11 @@ test("configured OpenAI provider is called exactly once per decision", async () 
     calls += 1;
     assert.equal(url, "https://model.invalid/v1/chat/completions");
     assert.equal(options.method, "POST");
+    const body = JSON.parse(options.body);
+    assert.equal(body.response_format.type, "json_schema");
+    assert.equal(body.response_format.json_schema.name, "askonce_decision");
+    assert.equal(body.response_format.json_schema.strict, true);
+    assert.equal(body.response_format.json_schema.schema.additionalProperties, false);
     return new Response(JSON.stringify({
       choices: [{ message: { content: JSON.stringify({
         label: "ANSWER", doc_id: "DOC-01", reason: null,
@@ -83,6 +96,38 @@ test("configured OpenAI provider is called exactly once per decision", async () 
   } finally {
     globalThis.fetch = originalFetch;
     delete globalThis.ASKONCE_AI_CONFIG;
+  }
+});
+
+test("configured provider is called once before an ambiguity guardrail", async () => {
+  const originalFetch = globalThis.fetch;
+  let calls = 0;
+  const traces = [];
+  globalThis.ASKONCE_AI_CONFIG = {
+    provider: "openai", apiKey: "test-key",
+    baseUrl: "https://model.invalid/v1", model: "test-model",
+  };
+  globalThis.ASKONCE_TRACE = (entry) => traces.push(entry);
+  globalThis.fetch = async () => {
+    calls += 1;
+    return new Response(JSON.stringify({
+      choices: [{ message: { content: JSON.stringify({
+        label: "ANSWER", doc_id: "DOC-08", reason: null,
+        question: null, answer: "Nộp Lab muộn cần mở ticket. [DOC-08]",
+      }) } }],
+    }), { status: 200, headers: { "Content-Type": "application/json" } });
+  };
+  try {
+    const result = await decide({ question: "Muộn sau 23h59 thì sao?" });
+    assert.equal(calls, 1);
+    assert.equal(result.label, "CLARIFY");
+    assert.equal(traces[0].guardrail, "missing_context");
+    assert.equal(traces[0].model_output.label, "ANSWER");
+    assert.equal(traces[0].output.label, "CLARIFY");
+  } finally {
+    globalThis.fetch = originalFetch;
+    delete globalThis.ASKONCE_AI_CONFIG;
+    delete globalThis.ASKONCE_TRACE;
   }
 });
 
