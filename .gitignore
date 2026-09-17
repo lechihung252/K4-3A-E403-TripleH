@@ -9,3 +9,6 @@ data/
 # Hệ thống
 .DS_Store
 node_modules/
+
+# Cấu hình model cục bộ của engine AskOnce
+codebase/engine/config.local.js

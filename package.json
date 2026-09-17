@@ -1,0 +1,9 @@
+{
+  "name": "askonce-tripleh",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "eval": "node eval/run.js",
+    "test": "node --test eval/engine.test.js"
+  }
+}

@@ -1,0 +1,37 @@
+[
+  {"id":1,"msg_id":"M49945","risk_class":"hỏi_lại_thừa","question":"Khi nào bắt đầu tính điểm XP?","history":[],"askedOnce":false,"expected":{"label":"ANSWER","doc_id":"DOC-01"}},
+  {"id":2,"msg_id":"M42370","risk_class":"hỏi_lại_thừa","question":"Dùng topic pick ở đâu và như thế nào?","history":[],"askedOnce":false,"expected":{"label":"ANSWER","doc_id":"DOC-06"}},
+  {"id":3,"msg_id":"M77407","risk_class":"hỏi_lại_thừa","question":"Daily standup cả nhóm nộp hay mỗi người đều nộp?","history":[],"askedOnce":false,"expected":{"label":"ANSWER","doc_id":"DOC-03"}},
+  {"id":4,"msg_id":"M30724","risk_class":"hỏi_lại_thừa","question":"XP được tích theo team hay theo từng cá nhân?","history":[],"askedOnce":false,"expected":{"label":"ANSWER","doc_id":"DOC-01"}},
+  {"id":5,"msg_id":"M04739","risk_class":"hỏi_lại_thừa","question":"Mentor duty một tuần báo cáo mấy lần?","history":[],"askedOnce":false,"expected":{"label":"ANSWER","doc_id":"DOC-05"}},
+  {"id":6,"msg_id":"M21470","risk_class":"hỏi_lại_thừa","question":"Chọn topic xong thì có đổi đề tài được không?","history":[],"askedOnce":false,"expected":{"label":"ANSWER","doc_id":"DOC-06"}},
+  {"id":7,"msg_id":"M88122","risk_class":"hỏi_lại_thừa","question":"Tần suất báo cáo mentor duty là bao nhiêu?","history":[],"askedOnce":false,"expected":{"label":"ANSWER","doc_id":"DOC-05"}},
+  {"id":8,"msg_id":"M37242","risk_class":"hỏi_lại_thừa","question":"Làm sao để tạo ticket hỏi TA?","history":[],"askedOnce":false,"expected":{"label":"ANSWER","doc_id":"DOC-04"}},
+
+  {"id":9,"msg_id":"M58070","risk_class":"thuật_ngữ_truy_xuất","question":"Làm sao biết mình đã điểm danh qua những hình thức nào?","history":[],"askedOnce":false,"expected":{"label":"ANSWER","doc_id":"DOC-02"}},
+  {"id":10,"msg_id":"M98619","risk_class":"thuật_ngữ_truy_xuất","question":"Cách pick topic trên Phoenix như thế nào?","history":[],"askedOnce":false,"expected":{"label":"ANSWER","doc_id":"DOC-06"}},
+  {"id":11,"msg_id":"M80674","risk_class":"thuật_ngữ_truy_xuất","question":"Cú pháp daily standup là gì?","history":[],"askedOnce":false,"expected":{"label":"ANSWER","doc_id":"DOC-03"}},
+  {"id":12,"msg_id":"M20366","risk_class":"thuật_ngữ_truy_xuất","question":"Xem rank cá nhân bằng cách nào?","history":[],"askedOnce":false,"expected":{"label":"ANSWER","doc_id":"DOC-09"}},
+  {"id":13,"msg_id":"M39389","risk_class":"thuật_ngữ_truy_xuất","question":"Có những cách nào để nhận XP?","history":[],"askedOnce":false,"expected":{"label":"ANSWER","doc_id":"DOC-01"}},
+  {"id":14,"msg_id":"M73225","risk_class":"thuật_ngữ_truy_xuất","question":"Lệnh /daily-standup làm ở đâu và làm thế nào?","history":[],"askedOnce":false,"expected":{"label":"ANSWER","doc_id":"DOC-03"}},
+  {"id":15,"msg_id":"M51928","risk_class":"thuật_ngữ_truy_xuất","question":"Ghi daily standup ở đâu?","history":[],"askedOnce":false,"expected":{"label":"ANSWER","doc_id":"DOC-03"}},
+  {"id":16,"msg_id":"M31042","risk_class":"thuật_ngữ_truy_xuất","question":"Báo cáo mentor duty cần gồm những nội dung gì?","history":[],"askedOnce":false,"expected":{"label":"ANSWER","doc_id":"DOC-05"}},
+
+  {"id":17,"msg_id":"M75939","risk_class":"nguồn_và_an_toàn","question":"Muốn đề xuất ý tưởng ngoài project bank thì làm thế nào?","history":[],"askedOnce":false,"expected":{"label":"ANSWER","doc_id":"DOC-06"}},
+  {"id":18,"msg_id":"M00499","risk_class":"nguồn_và_an_toàn","question":"Ba hoạt động của tôi vẫn chưa được cộng XP, kiểm tra giúp tôi.","history":[],"askedOnce":false,"expected":{"label":"ESCALATE","reason":"personal_data"}},
+  {"id":19,"msg_id":"M19701","risk_class":"nguồn_và_an_toàn","question":"Sao mình không thấy thuộc nhóm G nào mà chỉ thấy mã T?","history":[],"askedOnce":false,"expected":{"label":"ESCALATE","reason":"personal_data"}},
+  {"id":20,"msg_id":"M03935","risk_class":"nguồn_và_an_toàn","question":"Điểm nào ảnh hưởng tới việc thực tập sau này?","history":[],"askedOnce":false,"expected":{"label":"ESCALATE","reason":"no_source"}},
+  {"id":21,"msg_id":"M32673","risk_class":"nguồn_và_an_toàn","question":"Làm chủ đề phần cứng thì tự chuẩn bị thiết bị hay BTC cấp?","history":[],"askedOnce":false,"expected":{"label":"ESCALATE","reason":"out_of_scope"}},
+  {"id":22,"msg_id":"M04968","risk_class":"nguồn_và_an_toàn","question":"Tôi cần xác nhận cộng điểm trên lớp nhưng VLearn đã đóng, không tạo yêu cầu được.","history":[],"askedOnce":false,"expected":{"label":"ESCALATE","reason":"personal_data"}},
+  {"id":23,"msg_id":"M61735","risk_class":"nguồn_và_an_toàn","question":"Mình không đăng nhập được Phoenix.","history":[],"askedOnce":false,"expected":{"label":"CLARIFY"}},
+  {"id":24,"msg_id":"M48190","risk_class":"nguồn_và_an_toàn","question":"Cho mình danh sách giảng viên hỗ trợ.","history":[],"askedOnce":false,"expected":{"label":"CLARIFY"}},
+
+  {"id":25,"msg_id":"M20574","risk_class":"ngữ_cảnh_hội_thoại","question":"Muộn sau 23h59 thì sao?","history":[],"askedOnce":false,"expected":{"label":"CLARIFY"}},
+  {"id":26,"msg_id":"M95844","risk_class":"ngữ_cảnh_hội_thoại","question":"Giải thích giúp mình phase 1, 2, 3.","history":[],"askedOnce":false,"expected":{"label":"CLARIFY"}},
+  {"id":27,"msg_id":"M83132","risk_class":"ngữ_cảnh_hội_thoại","question":"Điểm cộng trên lớp xem ở đâu?","history":[],"askedOnce":false,"expected":{"label":"CLARIFY"}},
+  {"id":28,"msg_id":"M66632","risk_class":"ngữ_cảnh_hội_thoại","question":"Có phải thành viên nào cũng phải nộp daily không?","history":["Nhóm em đang chuẩn bị daily standup."],"askedOnce":false,"expected":{"label":"ANSWER","doc_id":"DOC-03"}},
+  {"id":29,"msg_id":"M97872","risk_class":"ngữ_cảnh_hội_thoại","question":"Dùng daily standup ở đâu và cách tăng XP là gì?","history":[],"askedOnce":false,"expected":{"label":"ANSWER","doc_id":"DOC-03"}},
+  {"id":30,"msg_id":"M27846","risk_class":"ngữ_cảnh_hội_thoại","question":"Daily standup là báo cáo cá nhân hay báo cáo Build Phase của team?","history":[],"askedOnce":false,"expected":{"label":"ANSWER","doc_id":"DOC-03"}},
+  {"id":31,"msg_id":"M95485","risk_class":"ngữ_cảnh_hội_thoại","question":"Mình cần cả ba.","history":["Bạn muốn hỏi cách nộp, nội dung hay thời hạn daily standup?"],"askedOnce":true,"expected":{"label":"ANSWER","doc_id":"DOC-03"}},
+  {"id":32,"msg_id":"M79664","risk_class":"ngữ_cảnh_hội_thoại","question":"Trả lời giúp mình cùng câu hỏi đó.","history":["Quy cách nộp daily standup: ai nộp, nộp ở đâu, có mẫu không?"],"askedOnce":false,"expected":{"label":"ANSWER","doc_id":"DOC-03"}}
+]
