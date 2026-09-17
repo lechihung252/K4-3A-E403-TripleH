@@ -18,6 +18,20 @@ npm test
 npm run eval -- --name=run-local
 ```
 
-Nếu không cấu hình model, engine chạy `deterministic-local-adapter` để test lặp lại được. Để chạy một model OpenAI-compatible thật, copy `codebase/engine/config.example.js` thành `config.local.js` và điền `apiKey`, `baseUrl`, `model`; hoặc đặt ba biến `ASKONCE_API_KEY`, `ASKONCE_BASE_URL`, `ASKONCE_MODEL`. File chứa key đã được gitignore.
+Nếu không cấu hình model, engine chạy `deterministic-local-adapter` để test lặp lại được. Nên cấu hình key qua biến môi trường, không đặt key vào code:
+
+```bash
+# OpenAI
+ASKONCE_PROVIDER=openai
+OPENAI_API_KEY=...
+ASKONCE_MODEL=gpt-4.1-mini
+
+# Hoặc Gemini
+ASKONCE_PROVIDER=gemini
+GEMINI_API_KEY=...
+ASKONCE_MODEL=gemini-2.5-flash
+```
+
+`ASKONCE_BASE_URL` là tùy chọn; engine tự dùng endpoint chính thức tương ứng. Gemini cũng nhận `GOOGLE_API_KEY`; `ASKONCE_API_KEY` vẫn được hỗ trợ để tương thích ngược. Nếu cả key OpenAI và Gemini cùng tồn tại, phải đặt `ASKONCE_PROVIDER` để chọn rõ provider. Nếu dùng `config.local.js` cho demo cục bộ, file này đã được gitignore; tuyệt đối không phục vụ key qua browser hoặc commit file.
 
 Không được trình bày kết quả local adapter là số đo AI thật. Khi có credential, chạy lại bằng tên mới (ví dụ `--name=run-model-1`) và dùng chính report/trace đó cho video CP3.

@@ -121,10 +121,16 @@ async function loadConfig() {
     if (!missing) console.warn("AskOnce could not load config.local.js:", error.message);
   }
   if (typeof process !== "undefined" && process.env) {
+    const provider = (process.env.ASKONCE_PROVIDER ||
+      ((process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY) && !process.env.OPENAI_API_KEY && !process.env.ASKONCE_API_KEY ? "gemini" : "openai"))
+      .toLowerCase();
     return {
-      apiKey: process.env.ASKONCE_API_KEY,
+      provider,
+      apiKey: provider === "gemini"
+        ? process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY || process.env.ASKONCE_API_KEY
+        : process.env.OPENAI_API_KEY || process.env.ASKONCE_API_KEY,
       baseUrl: process.env.ASKONCE_BASE_URL,
-      model: process.env.ASKONCE_MODEL,
+      model: process.env.ASKONCE_MODEL || (provider === "gemini" ? "gemini-2.5-flash" : undefined),
     };
   }
   return {};
@@ -150,6 +156,47 @@ async function callOpenAICompatible(config, payload) {
   return extractJson(data.choices?.[0]?.message?.content);
 }
 
+const DECISION_SCHEMA = {
+  type: "object",
+  properties: {
+    label: { type: "string", enum: ["ANSWER", "CLARIFY", "ESCALATE"] },
+    doc_id: { type: ["string", "null"] },
+    reason: { type: ["string", "null"], enum: ["personal_data", "no_source", "out_of_scope", "correction", null] },
+    question: { type: ["string", "null"] },
+    answer: { type: ["string", "null"] },
+  },
+  required: ["label", "doc_id", "reason", "question", "answer"],
+  additionalProperties: false,
+};
+
+async function callGemini(config, payload) {
+  const baseUrl = (config.baseUrl || "https://generativelanguage.googleapis.com/v1beta").replace(/\/$/, "");
+  const response = await fetch(`${baseUrl}/models/${encodeURIComponent(config.model)}:generateContent`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", "x-goog-api-key": config.apiKey },
+    body: JSON.stringify({
+      systemInstruction: { parts: [{ text: SYSTEM_PROMPT }] },
+      contents: [{ role: "user", parts: [{ text: JSON.stringify(payload) }] }],
+      generationConfig: {
+        temperature: 0,
+        responseMimeType: "application/json",
+        responseSchema: DECISION_SCHEMA,
+      },
+    }),
+  });
+  if (!response.ok) throw new Error(`Gemini returned HTTP ${response.status}: ${await response.text()}`);
+  const data = await response.json();
+  const text = data.candidates?.[0]?.content?.parts?.map((part) => part.text || "").join("");
+  return extractJson(text);
+}
+
+function callConfiguredProvider(config, payload) {
+  const provider = String(config.provider || "openai").toLowerCase();
+  if (provider === "openai") return callOpenAICompatible(config, payload);
+  if (provider === "gemini") return callGemini(config, payload);
+  throw new Error(`Unsupported AI provider: ${provider}`);
+}
+
 export async function decideWithModel(input) {
   const config = await loadConfig();
   if (!config?.apiKey || !config?.model) {
@@ -164,18 +211,19 @@ export async function decideWithModel(input) {
     top3: input.top3.map(({ id, title, content }) => ({ id, title, content })),
   };
   try {
-    const output = await callOpenAICompatible(config, payload);
-    globalThis.ASKONCE_TRACE?.({ mode: "configured-model", model: config.model, input: payload, output });
+    const provider = String(config.provider || "openai").toLowerCase();
+    const output = await callConfiguredProvider(config, payload);
+    globalThis.ASKONCE_TRACE?.({ mode: "configured-model", provider, model: config.model, input: payload, output });
     return output;
   } catch (error) {
     // A provider outage or malformed JSON is a no-source outcome, never permission
     // to improvise an answer. Do not include the API key in traces.
     globalThis.ASKONCE_TRACE?.({
-      mode: "configured-model", model: config.model, input: payload,
+      mode: "configured-model", provider: String(config.provider || "openai").toLowerCase(), model: config.model, input: payload,
       error: error instanceof Error ? error.message : String(error),
     });
     return { label: "ESCALATE", doc_id: null, reason: "no_source", question: null, answer: null };
   }
 }
 
-export { SYSTEM_PROMPT, deterministicDecision, extractJson };
+export { SYSTEM_PROMPT, DECISION_SCHEMA, deterministicDecision, extractJson };

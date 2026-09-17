@@ -48,10 +48,10 @@ test("safe parser accepts fenced JSON and rejects non-JSON", () => {
   assert.throws(() => extractJson("ANSWER"), /JSON object/);
 });
 
-test("configured provider is called exactly once per decision", async () => {
+test("configured OpenAI provider is called exactly once per decision", async () => {
   const originalFetch = globalThis.fetch;
   let calls = 0;
-  globalThis.ASKONCE_AI_CONFIG = { apiKey: "test-key", baseUrl: "https://model.invalid/v1", model: "test-model" };
+  globalThis.ASKONCE_AI_CONFIG = { provider: "openai", apiKey: "test-key", baseUrl: "https://model.invalid/v1", model: "test-model" };
   globalThis.fetch = async (url, options) => {
     calls += 1;
     assert.equal(url, "https://model.invalid/v1/chat/completions");
@@ -61,6 +61,40 @@ test("configured provider is called exactly once per decision", async () => {
         label: "ANSWER", doc_id: "DOC-01", reason: null,
         question: null, answer: "XP tính theo cá nhân. [DOC-01]",
       }) } }],
+    }), { status: 200, headers: { "Content-Type": "application/json" } });
+  };
+  try {
+    const result = await decide({ question: "XP tính theo team hay cá nhân?" });
+    assert.equal(calls, 1);
+    assert.equal(result.label, "ANSWER");
+    assert.equal(result.doc_id, "DOC-01");
+  } finally {
+    globalThis.fetch = originalFetch;
+    delete globalThis.ASKONCE_AI_CONFIG;
+  }
+});
+
+test("configured Gemini provider uses generateContent and structured JSON once", async () => {
+  const originalFetch = globalThis.fetch;
+  let calls = 0;
+  globalThis.ASKONCE_AI_CONFIG = {
+    provider: "gemini", apiKey: "gemini-test-key",
+    baseUrl: "https://generativelanguage.googleapis.test/v1beta", model: "gemini-test",
+  };
+  globalThis.fetch = async (url, options) => {
+    calls += 1;
+    assert.equal(url, "https://generativelanguage.googleapis.test/v1beta/models/gemini-test:generateContent");
+    assert.equal(options.method, "POST");
+    assert.equal(options.headers["x-goog-api-key"], "gemini-test-key");
+    const body = JSON.parse(options.body);
+    assert.equal(body.generationConfig.responseMimeType, "application/json");
+    assert.equal(body.generationConfig.responseSchema.type, "object");
+    assert.match(body.systemInstruction.parts[0].text, /AskOnce/);
+    return new Response(JSON.stringify({
+      candidates: [{ content: { parts: [{ text: JSON.stringify({
+        label: "ANSWER", doc_id: "DOC-01", reason: null,
+        question: null, answer: "XP tính theo cá nhân. [DOC-01]",
+      }) }] } }],
     }), { status: 200, headers: { "Content-Type": "application/json" } });
   };
   try {
