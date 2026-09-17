@@ -100,7 +100,8 @@ test("configured Gemini provider uses generateContent and structured JSON once",
     assert.equal(options.headers["x-goog-api-key"], "gemini-test-key");
     const body = JSON.parse(options.body);
     assert.equal(body.generationConfig.responseMimeType, "application/json");
-    assert.equal(body.generationConfig.responseSchema.type, "object");
+    assert.equal(body.generationConfig.responseJsonSchema.type, "object");
+    assert.equal(body.generationConfig.responseSchema, undefined);
     assert.match(body.systemInstruction.parts[0].text, /AskOnce/);
     return new Response(JSON.stringify({
       candidates: [{ content: { parts: [{ text: JSON.stringify({

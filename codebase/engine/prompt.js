@@ -180,7 +180,9 @@ async function callGemini(config, payload) {
       generationConfig: {
         temperature: 0,
         responseMimeType: "application/json",
-        responseSchema: DECISION_SCHEMA,
+        // Use the JSON-Schema field rather than the older protobuf Schema field.
+        // This supports nullable unions and additionalProperties.
+        responseJsonSchema: DECISION_SCHEMA,
       },
     }),
   });
