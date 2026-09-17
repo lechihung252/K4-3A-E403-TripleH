@@ -1,0 +1,11 @@
+{
+  "xp": ["xp", "điểm kinh nghiệm", "kinh nghiệm", "tính điểm", "cộng điểm", "cày xp", "tăng xp"],
+  "diem_danh": ["điểm danh", "check-in", "attendance", "qr code", "quét mã", "workshop", "zoom", "vlearn", "ngồi nhầm phòng"],
+  "daily_standup": ["daily standup", "/daily-standup", "nộp daily", "báo cáo hàng ngày", "yesterday", "today"],
+  "ticket": ["ticket", "mở ticket", "tạo ticket", "hỗ trợ", "liên hệ ta", "liên hệ mod", "liên hệ admin", "sự cố tài khoản"],
+  "mentor_duty": ["mentor duty", "báo cáo mentor", "tần suất báo cáo", "gặp mentor"],
+  "topic_pick": ["topic pick", "chọn đề tài", "đổi đề tài", "project bank", "ngân hàng đề tài", "chọn topic"],
+  "lap_team": ["lập team", "ghép nhóm", "tạo team", "cùng level", "thành viên nghỉ giữa chừng", "ghép đội"],
+  "deadline": ["deadline", "hạn nộp", "nộp lab", "nộp bài", "muộn", "hạn chót"],
+  "rank": ["rank", "bảng xếp hạng", "xếp hạng xp", "xem rank"]
+}

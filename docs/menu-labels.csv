@@ -1,0 +1,65 @@
+﻿stt,bot_msg_id,question_msg_id,time,nhan_menu,hanh_dong_dung,ly_do_chinh,ly_do_phu,do_chac,so_tin_nhan_them_30p,tom_tat_y_hoi,giai_thich
+1,M30065,M94466,2026-09-12 13:33,THỪA,ANSWER,R4,R1,cao,2,Ngồi nhầm phòng lab hôm qua có ảnh hưởng gì không,Ý hỏi rõ (hậu quả điểm danh). Menu có lựa chọn vô nghĩa: ngồi nhầm phòng lab trong một kênh Discord.
+2,M81774,M61735,2026-09-12 16:32,CẦN,CLARIFY,R6,R5,thấp,1,Không đăng nhập được Phoenix,"Cần biết lỗi hiện ra là gì nên hỏi lại 1 câu là hợp lý, nhưng menu đưa 3 câu hỏi thay vì 3 lựa chọn."
+3,M53789,M48190,2026-09-12 16:33,CẦN,CLARIFY,R6,,thấp,2,Xin danh sách giảng viên hỗ trợ,"Có thể là theo lớp hoặc toàn chương trình. Người hỏi sau đó nêu 2 phòng cụ thể, nên hỏi lại lớp nào là hợp lý."
+4,M36672,M49945,2026-09-12 18:46,THỪA,ANSWER,R1,,cao,3,Khi nào bắt đầu tính điểm XP,"Câu hỏi rõ, 1 ý. Người hỏi phải trả lời 'tất cả' 2 lần rồi tự liệt kê lại."
+5,M39039,M00499,2026-09-12 18:49,THỪA,ESCALATE,R5,R2,cao,1,Liệt kê 3 hoạt động chưa được cộng XP,"Người hỏi đã đánh số sẵn 3 ý. Đây là sự cố cộng điểm của cá nhân, nên chuyển TA."
+6,M85319,M24294,2026-09-12 18:55,THỪA,ANSWER,R7,R4,cao,2,Xem mình có bị lỡ điểm danh buổi nào (xem ở hệ thống trường),2 tin trước đã nói rõ là điểm danh. Bot bỏ qua và đưa menu lạc đề (quy định đặt tên Zoom).
+7,M37493,M96789,2026-09-12 21:04,THỪA,ANSWER,R1,,thấp,2,Làm sao theo kịp tiến độ chương trình,"Trả lời chung được, nhưng chữ tiến độ có thể hiểu 2 nghĩa nên độ chắc thấp."
+8,M41681,M88727,2026-09-12 21:57,THỪA,ANSWER,R2,,cao,2,Hoạt động cày XP và daily standup bắt đầu khi nào,"Hỏi 2 thứ, trả lời được cả 2. Bot bắt chọn 1, người hỏi trả lời 'cả hai'."
+9,M31615,M32171,2026-09-12 22:28,THỪA,ANSWER,R2,,cao,2,Xin tài liệu hướng dẫn setup Git → Phoenix → team,"Muốn 1 tài liệu trọn bộ. Bot tách thành 3 lựa chọn, người hỏi phải nhắc lại."
+10,M92484,M20574,2026-09-13 00:15,CẦN,CLARIFY,R6,,cao,4,Muộn sau 23h59 (không nói muộn việc gì),"Thiếu thông tin thật. Hỏi lại là đúng, dù lẽ ra chỉ cần 1 câu."
+11,M20301,M58070,2026-09-13 09:09,THỪA,ANSWER,R4,,thấp,1,Làm sao biết mình đã điểm danh,Có nhiều hình thức điểm danh nên có thể liệt kê gộp. Menu thiếu đúng hình thức người hỏi dùng (Google Forms).
+12,M79582,M42370,2026-09-13 09:41,THỪA,ANSWER,R3,,cao,1,Dùng lệnh topic pick ở đâu và như thế nào,Bot hiểu chữ 'dung' (không dấu) là tên riêng. Người hỏi trả lời 'cả 2'.
+13,M81193,M92442,2026-09-13 10:34,THỪA,ANSWER,R2,,cao,1,Hỏi giới hạn tính toán của bot và nên dùng bot chung hay chatbot riêng,"Ngoài phạm vi, nên từ chối ngắn gọn cho cả 2 ý. Người hỏi trả lời 'cả hai'."
+14,M70656,M12561,2026-09-13 11:51,THỪA,ANSWER,R2,,cao,3,Giải thích chi tiết daily standup và mentor duty,Đã nói rõ cần cả 2. Bot bắt chọn 1.
+15,M20697,M15979,2026-09-13 11:54,THỪA,ANSWER,R7,R2,cao,1,Nhắc lại: demo daily standup và mentor duty,Vòng lặp: vừa trả lời 'cả 2' xong lại nhận menu y hệt.
+16,M03496,M59124,2026-09-13 13:58,THỪA,ANSWER,R4,,cao,1,Theo dõi điểm lab ở đâu,Menu hỏi ngược lại chính câu hỏi (theo dõi trên hệ thống nào).
+17,M91156,,2026-09-13 14:24,LOẠI,,,,,0,(Câu hỏi gốc không có trong pack),"Không đánh giá được, loại khỏi mẫu."
+18,M77867,M95844,2026-09-13 15:33,CẦN,CLARIFY,R6,,thấp,1,"Giải thích các phase 1, 2, 3","Phase có thể thuộc nhiều quy trình. Hỏi lại có thể hợp lý, cần kiểm tra khoá có đúng 1 bộ phase 1-2-3 không."
+19,M20940,M85508,2026-09-13 17:20,THỪA,ANSWER,R4,,cao,1,Tối nay có lịch gì không,Câu hỏi rõ. Menu có lựa chọn vô nghĩa: lịch trình các lệnh bot.
+20,M56866,M19701,2026-09-13 19:28,THỪA,ESCALATE,R5,R4,cao,0,"Sao không thấy mình thuộc nhóm G nào, chỉ thấy mã T","Sự cố phân nhóm của cá nhân, nên chuyển TA. Menu tách G và T là vô nghĩa."
+21,M50097,M81645,2026-09-13 19:54,THỪA,ANSWER,R7,,cao,5,Tìm mã đội trên Phoenix ở đâu,2 tin trước đã nói rõ trên Phoenix. Người hỏi phải nhắc lại 3 lần.
+22,M82507,M94849,2026-09-13 21:23,THỪA,ANSWER,R2,,cao,7,"Chưa có đề tài thì nộp daily gì, nộp thế nào",3 lựa chọn đều là các phần của cùng 1 câu hỏi. Người hỏi trả lời 'cả 3'.
+23,M56057,M66632,2026-09-13 21:29,THỪA,ANSWER,R7,R4,cao,4,Có phải thành viên nào cũng phải nộp/tag daily không,"Ngữ cảnh daily ở 2 tin trước bị bỏ qua. Menu hỏi về tên kênh, lạc đề."
+24,M36730,M30724,2026-09-13 21:59,THỪA,ANSWER,R3,,cao,0,XP tích theo team hay cá nhân,Bot hiểu XP là kinh nghiệm tích luỹ.
+25,M12284,M04739,2026-09-13 22:10,THỪA,ANSWER,R2,,cao,1,Báo cáo mentor khi 1 tuần có 2 lịch + xin tin nhắn mẫu,Câu hỏi nhiều ý nhưng rõ. Người hỏi trả lời 'cả 1 và 2'.
+26,M09955,M98619,2026-09-13 22:16,THỪA,ANSWER,R3,,cao,2,Cách pick topic trên Phoenix (gõ sai chính tả),Bot không nhận ra Phoenix và đưa lựa chọn không liên quan (đặt tên AI Log).
+27,M29170,M66633,2026-09-13 23:54,THỪA,ANSWER,R2,,cao,3,"Channel activity hoạt động thế nào, có phải merge vào main mới thông báo","2 ý liên quan, trả lời được luôn."
+28,M01639,M77407,2026-09-14 00:04,THỪA,ANSWER,R4,,cao,0,Daily standup cả nhóm nộp hay 1 người nộp,Menu đưa luôn 2 đáp án có thể có và bắt người hỏi tự chọn đáp án.
+29,M16743,M51773,2026-09-14 00:09,THỪA,ANSWER,R1,,thấp,1,Chi tiết về Demo Day,Yêu cầu rộng nhưng có thể trả lời tổng quan. Độ chắc thấp.
+30,M24218,M94107,2026-09-14 00:26,THỪA,ANSWER,R1,,cao,5,Nội dung yêu cầu của daily standup hôm nay,"Câu hỏi rõ (hôm nay, nộp lúc 10h, chủ đề gì)."
+31,M28060,M80674,2026-09-14 00:28,THỪA,ANSWER,R7,R1,cao,2,Cú pháp daily standup,"Rõ ràng là lệnh /daily-standup, và ngữ cảnh đã có ở 2 tin trước."
+32,M35019,M89758,2026-09-14 08:38,THỪA,ANSWER,R1,,cao,2,Daily standup và hoạt động XP bắt đầu từ khi nào,"Câu hỏi rõ, lặp lại đúng chủ đề bot đã đưa menu ở M36672 và M41681."
+33,M78977,M95485,2026-09-14 08:39,THỪA,ANSWER,R7,,cao,0,Người hỏi dán lại menu của bot để chọn cả 3,Vòng lặp: bot đưa menu lần 2.
+34,M04512,M97872,2026-09-14 08:57,THỪA,ANSWER,R2,,cao,1,Dùng daily standup ở đâu + cách tăng XP,"2 ý rõ ràng, người hỏi trả lời 'lần lượt 1 và 2'."
+35,M06366,M31759,2026-09-14 09:02,THỪA,ANSWER,R1,,cao,2,Xin 1 mẫu daily standup,"Trong khoá chỉ có 1 loại daily standup, không cần hỏi mục đích."
+36,M23458,M57734,2026-09-14 09:05,THỪA,ANSWER,R2,,cao,6,"Quy cách nộp daily standup: ai nộp, nộp ở đâu, có mẫu không",Nhiều ý nhưng rõ. Mở đầu chuỗi 3 menu liên tiếp.
+37,M06312,M79664,2026-09-14 09:06,THỪA,ANSWER,R7,R2,cao,5,Hỏi lại cùng câu quy cách nộp daily standup,Vòng lặp lần 2 cho cùng người hỏi.
+38,M68561,M65121,2026-09-14 09:14,THỪA,ANSWER,R7,,cao,4,Dán lại các lựa chọn của menu và xin trả lời,Vòng lặp lần 3. Người hỏi dán tiếp 3 lần nữa.
+39,M22139,M51928,2026-09-14 09:25,THỪA,ANSWER,R1,,cao,2,Ghi daily standup ở đâu,"Câu hỏi rõ, 1 ý."
+40,M70977,M76319,2026-09-14 09:32,THỪA,ANSWER,R4,,cao,1,Bot có đọc được ngân hàng 382 đề tài không,Câu hỏi có/không về khả năng của bot. Menu lại hỏi tìm ở đâu.
+41,M63958,M28018,2026-09-14 09:47,THỪA,ANSWER,R1,,cao,0,Daily standup nhóm có phải nộp không,"Câu hỏi có/không, rõ ràng."
+42,M61098,M73225,2026-09-14 09:53,THỪA,ANSWER,R1,,cao,3,/daily-standup làm ở đâu và làm thế nào,Người hỏi đã ghi đúng tên lệnh.
+43,M04063,M27846,2026-09-14 09:58,THỪA,ANSWER,R4,,cao,0,Daily standup là báo cáo học cá nhân hay build phase của team,Menu có lựa chọn sai (xem danh sách lệnh bot) và bắt tự chọn đáp án.
+44,M90031,,2026-09-14 10:02,LOẠI,,,,,0,(Câu hỏi gốc không có trong pack),"Không đánh giá được, loại khỏi mẫu."
+45,M93395,M75939,2026-09-14 10:24,THỪA,ANSWER,R1,,cao,1,Đề xuất ý tưởng ngoài project bank thế nào,Câu hỏi rõ về quy trình.
+46,M04702,M88122,2026-09-14 10:39,THỪA,ANSWER,R1,,cao,0,Mentor duty 1 tuần báo cáo mấy lần,"Câu hỏi rõ, 1 ý."
+47,M59177,M04524,2026-09-14 11:18,THỪA,ANSWER,R1,,cao,2,Khi nào biết mentor của mình,Câu hỏi rõ về thời điểm.
+48,M78739,M66575,2026-09-14 11:18,THỪA,ANSWER,R1,,thấp,3,Lấy data ở đâu để làm dự án,"Trong khoá, dự án gần như chắc là Build Phase. Độ chắc thấp."
+49,M20134,M21470,2026-09-14 11:20,THỪA,ANSWER,R3,,cao,1,Chọn topic xong có đổi được không,"Bot không nhận ra lệnh topic pick, đưa lựa chọn đổi nickname."
+50,M24876,M03935,2026-09-14 11:23,THỪA,ESCALATE,R1,,thấp,1,Điểm nào ảnh hưởng tới thực tập sau này,"Câu hỏi rõ nhưng là chính sách có thể không có trong tài liệu, nên chuyển TA/BTC."
+51,M38995,M32673,2026-09-14 13:33,THỪA,ESCALATE,R4,,cao,1,Chủ đề phần cứng thì tự chuẩn bị hay BTC cấp,"Lựa chọn 1 của menu chính là câu hỏi gốc. Câu này BTC quyết định, nên chuyển TA."
+52,M10039,M63545,2026-09-14 13:43,THỪA,ANSWER,R7,,cao,1,Nộp daily standup như thế nào,Tin ngay trước đã nói cách nộp daily stand up.
+53,M39531,M54714,2026-09-14 13:55,THỪA,ANSWER,R4,,cao,3,Tổng hợp các cách tăng XP,Menu có lựa chọn XP trong trò chơi. Người hỏi phải giải thích thêm 3 tin.
+54,M22633,M31042,2026-09-14 14:00,THỪA,ANSWER,R4,,cao,0,Tài liệu nộp mentor duty gồm gì,Các lựa chọn không liên quan đến mentor duty.
+55,M55430,M81204,2026-09-14 15:12,THỪA,ANSWER,R4,,cao,2,Data cho đề tài có phải BTC cấp không,"Các lựa chọn lạc đề (kênh Discord, lệnh bot, ticket)."
+56,M14041,M90994,2026-09-14 16:24,THỪA,ANSWER,R7,,cao,1,Cú pháp nộp daily standup,Người hỏi đã hỏi 2 lần trước đó.
+57,M41310,M54695,2026-09-14 17:31,THỪA,ANSWER,R4,,cao,1,Điền gì vào trường yesterday/today của daily-standup,"Câu hỏi rõ. Các lựa chọn lạc đề (khung giờ, Zoom)."
+58,M59182,M37242,2026-09-14 17:52,THỪA,ANSWER,R3,,cao,1,Làm sao tạo ticket,Bot đọc thành ticker và đưa lựa chọn ticker chứng khoán.
+59,M78174,M20366,2026-09-14 18:35,THỪA,ANSWER,R3,,cao,1,Xem rank cá nhân thế nào,"Bot không nhận ra lệnh /rank, đưa lựa chọn rank trong game."
+60,M69179,M86498,2026-09-14 19:18,THỪA,ANSWER,R4,,cao,1,Bot lấy được nội dung kênh của nhóm không,Câu hỏi có/không về quyền của bot. Menu hỏi kênh nào.
+61,M41223,M39389,2026-09-14 19:49,THỪA,ANSWER,R1,,cao,1,Các cách nhận XP,Câu hỏi rõ.
+62,M57683,M83132,2026-09-14 20:23,CẦN,CLARIFY,R6,,thấp,2,Điểm cộng trên lớp xem ở đâu,Có thể là XP Discord hoặc điểm trên VLearn. Hỏi lại 1 câu là hợp lý.
+63,M73803,M04968,2026-09-14 22:21,THỪA,ESCALATE,R5,R2,cao,1,"Xác nhận cộng điểm trên lớp, VLearn đã đóng không tạo yêu cầu được","Sự cố hệ thống của cá nhân, nên chuyển TA ngay."
+64,M95831,M31751,2026-09-14 23:53,THỪA,ANSWER,R1,,cao,1,Các setup cần thiết trên Phoenix,"Câu hỏi rõ, liệt kê được tất cả."
