@@ -35,7 +35,7 @@ Loại: [x] Tối ưu tính năng có sẵn  [ ] Tính năng mới
 - Ứng viên CHỌN + vì sao (bằng số): **Ứng viên 3 — toàn bộ 9 chủ đề hay hỏi**, vì đây là phạm vi duy nhất phủ được phần lớn bằng chứng đã thu: 84% (52/62) case gán nhãn tay là hỏi lại thừa nằm rải trên nhiều chủ đề chứ không dồn vào 1 DOC, và 20% (63/313) mining B cũng là số tổng trên toàn bộ câu trả lời của bot, không phải của riêng 1 chủ đề — chọn phạm vi hẹp hơn sẽ chỉ giải được một phần nhỏ trong số đó.
 
 ## §3. Giải pháp tương tự đã nghiên cứu
-- **NotebookLM** — Lê Chí Hùng thử 17/9, nguồn là 4 file `kb/` của nhóm (DOC-01, 02, 04, 08), 5 câu ứng với 3 nhánh + correction (ảnh: `validation/notebooklm-*.png`):
+- **NotebookLM** — Lê Chí Hùng thử 17/9, nguồn là 4 file `kb/` của nhóm (DOC-01, 02, 04, 08), 5 câu ứng với 3 nhánh + correction (ảnh chụp màn hình: `validation/notebooklm/1.png`–`5.png`, theo thứ tự: tính XP · muộn sau 23h59 · điểm cá nhân · học bổng · phản bác "XP tính từ tuần 2"):
   - *Flow:* upload tài liệu → hỏi tự do → trả lời dài có số cite [1][2] cạnh từng ý, bấm cite nhảy về đoạn gốc; cuối câu gợi ý 2–3 câu hỏi tiếp.
   - *Đáng học:* (1) cite đặt **ngay sau từng ý**, không gom cuối bài — kiểm được từng câu; (2) tài liệu thiếu thì nói thẳng "chưa quy định" (câu "khi nào tính XP", "học bổng"), không bịa; (3) bị phản bác "sai rồi, XP tính từ tuần 2" nó **không đổi theo người dùng** — nói tài liệu không đề cập, nhắc lại nguồn, chỉ về kênh BTC.
   - *Đáng né:* (1) câu mơ hồ "muộn sau 23h59" nó **không hỏi lại** mà tự chọn cách hiểu (daily standup) rồi trả lời một đoạn, cite DOC-01 trong khi DOC-08 mới nói về hạn 23:59 — đúng kiểu "tự tin sai nguồn" mà cost-of-error của nhóm sợ nhất; (2) câu ngoài phạm vi nó đề nghị **tìm trên internet** — với bot quy định khoá học, web không phải nguồn chính thức; (3) mọi kết thúc đều là "bạn tự đi kiểm tra / tự tạo ticket", không có bước chuyển người cụ thể.
@@ -107,8 +107,8 @@ Cách chặn theo lớp: (1) prompt ép "câu rõ + có nguồn → ANSWER ngay"
   | `run-gemini-1` | 11:18 | gemini-3.6-flash (free) | 32 | 5 | 15,6 | 0 | 21/32 case dính HTTP 429/503 → ép no_source; không dùng làm số đo, là lý do thêm retry |
   | `run-openai-1` | 13:33 | gpt-4o-mini | 32 | 26 | 81,3 | 0 | 5/5 case CLARIFY sai — model chưa bao giờ chọn CLARIFY |
   | `run-model-1` | 13:54 | gpt-4.1-mini, prompt thêm định nghĩa + ví dụ CLARIFY | 32 | 28 | **87,5** | 0 | M61735 "không đăng nhập được Phoenix" → personal_data thay vì hỏi lỗi gì |
-  | `run-model-2` | — | gpt-4.1-mini, thử biến thể prompt tổng quát hơn | 32 | 24 | 75,0 | 0 | Lỗi hành vi prompt, không phải lỗi provider/parse — bị loại |
-  | `run-model-3` | — | gpt-4.1-mini, thử biến thể prompt khác | 32 | 23 | 71,9 | 0 | Cùng nguyên nhân với run-model-2 — bị loại |
+  | `run-model-2` | 16:20 | gpt-4.1-mini, thử biến thể prompt tổng quát hơn | 32 | 24 | 75,0 | 0 | Lỗi hành vi prompt, không phải lỗi provider/parse — bị loại |
+  | `run-model-3` | 16:22 | gpt-4.1-mini, thử biến thể prompt khác | 32 | 23 | 71,9 | 0 | Cùng nguyên nhân với run-model-2 — bị loại |
 
   Đối chiếu quality bar: `run-model-1` **đạt** (87,5 ≥ 85, Factuality fail = 0) và được giữ làm bản chọn. `run-model-2`/`run-model-3` là hai lần thử nghiệm prompt tổng quát hơn nhưng tụt điểm, nhóm quay lại prompt của `run-model-1`, không dùng regex/rule viết riêng theo golden set để nâng điểm. Hai lượt `run-1`/`run-2` trong `eval/` chạy adapter local, không phải AI, không tính.
 
