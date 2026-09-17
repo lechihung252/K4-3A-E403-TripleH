@@ -6,7 +6,7 @@
 
 Tôi là **đội trưởng**, phụ trách **Spec + Evidence**: nộp cả 5 checkpoint, giữ `spec.md`, `kb/`, `docs/` không để ai đụng chéo (đúng nguyên tắc chia theo thư mục để tránh conflict git), thu bằng chứng (mining, gán nhãn tay, khảo sát) và khoá quality bar dựa trên số thật.
 
-Ở CP1 tôi là người đề xuất ý tưởng AskOnce và bảo vệ hướng đi này trong buổi thảo luận nhóm — **[điền: ý tưởng ban đầu là gì, bị phản biện ở điểm nào (khả thi/phạm vi/so với hướng khác), bảo vệ bằng lý lẽ gì để nhóm chốt theo hướng này]**. Ở CP2 tôi vẽ workflow đầu tiên (tra tài liệu trước → AI quyết định → kiểm lại bằng code), sau đó cả nhóm cùng góp ý và Hùng dựng thành sơ đồ chính thức `docs/flow-v2.html`/`flow-v2.png` — bản v2 giữ đúng khung 3 nhánh ANSWER/CLARIFY/ESCALATE tôi đề xuất, thêm nhánh Correction và bước kiểm nguồn bằng code sau AI mà nhóm bổ sung khi thảo luận. Nhận vai trò này vì tôi là người theo sát nhất phần "đạt là gì" của sản phẩm — quality bar, evidence, chuẩn nghiệm thu — thay vì phần code.
+Ở CP1 tôi là người đề xuất ý tưởng AskOnce và bảo vệ hướng đi này trong buổi thảo luận nhóm. Ở CP2 tôi vẽ workflow đầu tiên (tra tài liệu trước → AI quyết định → kiểm lại bằng code), sau đó cả nhóm cùng góp ý và Hùng dựng thành sơ đồ chính thức `docs/flow-v2.html`/`flow-v2.png` — bản v2 giữ đúng khung 3 nhánh ANSWER/CLARIFY/ESCALATE tôi đề xuất, thêm nhánh Correction và bước kiểm nguồn bằng code sau AI mà nhóm bổ sung khi thảo luận. Nhận vai trò này vì tôi là người theo sát nhất phần "đạt là gì" của sản phẩm — quality bar, evidence, chuẩn nghiệm thu — thay vì phần code.
 
 ## 2. Phần mình đã làm
 
