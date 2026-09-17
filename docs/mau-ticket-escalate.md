@@ -1,6 +1,6 @@
 # Mẫu ticket điền sẵn — màn hình ESCALATE (bước ⑥)
 
-Khi `decide()` trả `label: "ESCALATE"`, prototype hiện khung này cho học viên bấm "Tạo ticket" — nội dung đã điền sẵn từ `question`, `reason`, `doc_ids`, để học viên chỉ cần xác nhận và gửi, không phải gõ lại từ đầu.
+Khi `decide()` trả `label: "ESCALATE"`, prototype hiện khung này cho học viên bấm "Tạo ticket" — nội dung đã điền sẵn từ `question`, `reason`, danh sách DOC-xx đã tra ở bước ② (`top3`), để học viên chỉ cần xác nhận và gửi, không phải gõ lại từ đầu.
 
 ## Khung điền sẵn (text, Hùng ghép vào UI)
 
@@ -11,7 +11,9 @@ Câu hỏi gốc: {{question}}
 
 Lý do chuyển TA: {{ly_do_hien_thi}}
 
-Đã tra: {{doc_ids đã kiểm, hoặc "không tìm thấy tài liệu liên quan"}}
+Đã tra: {{các DOC-xx trong top3 bước ②, hoặc "không tìm thấy tài liệu liên quan"}}
+
+Câu trả lời cũ: {{chỉ khi reason = correction — câu ANSWER học viên vừa phủ nhận}}
 
 --- Học viên bổ sung thêm nếu cần ---
 
@@ -24,7 +26,10 @@ Lý do chuyển TA: {{ly_do_hien_thi}}
 |---|---|
 | `no_source` | "Trợ lý chưa tìm thấy tài liệu nào nói đúng câu hỏi này, cần TA xác nhận trực tiếp." |
 | `personal_data` | "Đây là thông tin/sự cố riêng của bạn (điểm, điểm danh, tài khoản...), cần TA kiểm trên hệ thống." |
-| `out_of_scope` (giá trị khác `null`) | "Câu hỏi ngoài phạm vi Trợ lý có thể trả lời (ví dụ quyết định của BTC), chuyển TA/BTC xử lý." |
+| `out_of_scope` | "Câu hỏi ngoài phạm vi Trợ lý có thể trả lời (ví dụ quyết định của BTC), chuyển TA/BTC xử lý." |
+| `correction` | "Bạn báo câu trả lời trước chưa đúng — Trợ lý không đoán lại lần nữa, cần TA kiểm tra." — ticket kèm thêm câu trả lời cũ để TA đối chiếu (flow-v2 ⑥, spec §6 Correction). |
+
+Cả 4 reason đều kèm mẫu ticket (nhóm chốt sáng 17/9). Không có reason nào kết thúc mà không đưa mẫu.
 
 ## Nguyên tắc khi ghép (đối chiếu spec §4b)
 
