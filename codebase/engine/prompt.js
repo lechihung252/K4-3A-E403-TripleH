@@ -1,5 +1,3 @@
-import { normalize } from "./retrieve.js";
-
 const SYSTEM_PROMPT = `# Vai trò
 Bạn là lõi quyết định của AskOnce, trợ lý chỉ dùng tài liệu được truy xuất để hỗ trợ học viên trong Build Phase.
 
@@ -55,104 +53,17 @@ const ANSWERS = {
   "DOC-09": "Bạn xem bảng xếp hạng XP bằng lệnh xem rank trên Discord hoặc trên Phoenix; bảng có thể trễ vài phút khi đang cập nhật. [DOC-09]",
 };
 
-function includesAny(text, expressions) {
-  return expressions.some((expression) => expression.test(text));
-}
-
-function policyGuardrail({ question, history, askedOnce }) {
-  const q = normalize(question);
-  const rawQuestion = String(question).toLowerCase();
-
-  if (history.length > 0 && includesAny(q, [/^sai( roi)?$/, /khong dung/, /khong phai/, /tra loi sai/, /chua dung y/])) {
+function deterministicDecision({ top3 }) {
+  // UI-only mock: use retrieval confidence, never rules tailored to eval questions.
+  const preferred = top3.find((document) => Number(document.score) >= 3 && ANSWERS[document.id]);
+  if (preferred) {
     return {
-      rule: "correction",
-      output: { label: "ESCALATE", doc_id: null, reason: "correction", question: null, answer: null },
+      label: "ANSWER", doc_id: preferred.id, reason: null,
+      question: null, answer: ANSWERS[preferred.id],
     };
   }
-
-  const isPersonal = includesAny(q, [
-    /\b(cua toi|cua minh|cho toi|sao minh|tai khoan cua|nhom cua)\b/,
-    /\b(chua duoc cong|khong duoc cong|khong thay.*(xp|diem|nhom)|lo diem danh|bi thieu diem)\b/,
-    /\b(xac nhan.*diem|hoat dong.*chua.*xp)\b/,
-  ]);
-  if (isPersonal) {
-    return {
-      rule: "personal_data",
-      output: { label: "ESCALATE", doc_id: null, reason: "personal_data", question: null, answer: null },
-    };
-  }
-
-  // These decisions are not stated in any retrieved document. Similar words in a
-  // document must never be treated as evidence for an answer.
-  if (/\bthuc tap\b/.test(q)) {
-    return {
-      rule: "known_no_source",
-      output: { label: "ESCALATE", doc_id: null, reason: "no_source", question: null, answer: null },
-    };
-  }
-  if (/\bphan cung\b/.test(q) && /\b(tu chuan bi|btc cap|thiet bi)\b/.test(q)) {
-    return {
-      rule: "known_out_of_scope",
-      output: { label: "ESCALATE", doc_id: null, reason: "out_of_scope", question: null, answer: null },
-    };
-  }
-
-  const mentionsLate = /muộn|trễ|23:59|23h59/.test(rawQuestion) || /\btre\b/.test(q);
-  const ambiguous =
-    (mentionsLate && !/\b(nop|bai|lab|vao lop|diem danh)\b/.test(q)) ||
-    (/\b(phase 1|phase 2|phase 3|cac phase)\b/.test(q) && !/\bbuild|quy trinh|khoa hoc\b/.test(q)) ||
-    (/\b(diem cong|xem diem)\b/.test(q) && !/\b(xp|vlearn|phoenix|rank|lab)\b/.test(q)) ||
-    (/\b(giang vien|nguoi ho tro)\b/.test(q) && !/\b(lop|phong|mon|mentor)\b/.test(q)) ||
-    (/\bkhong dang nhap duoc\b/.test(q) && !/\b(loi|ma loi|quen mat khau)\b/.test(q));
-  if (ambiguous) {
-    if (askedOnce) {
-      return {
-        rule: "clarification_limit",
-        output: { label: "ESCALATE", doc_id: null, reason: "no_source", question: null, answer: null },
-      };
-    }
-    let followUp = "Bạn có thể nói rõ bạn đang hỏi về hoạt động hoặc hệ thống nào không?";
-    if (mentionsLate) followUp = "Bạn đang hỏi nộp Lab muộn, vào lớp muộn, hay một việc khác?";
-    else if (/diem cong|xem diem/.test(q)) followUp = "Bạn muốn xem XP, điểm Lab hay điểm trên VLearn?";
-    else if (/giang vien|nguoi ho tro/.test(q)) followUp = "Bạn cần danh sách hỗ trợ của lớp hoặc phòng học nào?";
-    else if (/khong dang nhap/.test(q)) followUp = "Phoenix đang hiện lỗi gì khi bạn đăng nhập?";
-    return {
-      rule: "missing_context",
-      output: { label: "CLARIFY", doc_id: null, reason: null, question: followUp, answer: null },
-    };
-  }
-
-  return null;
-}
-
-function deterministicDecision({ question, history, askedOnce, top3 }) {
-  const guardrail = policyGuardrail({ question, history, askedOnce });
-  if (guardrail) return guardrail.output;
-
-  const q = normalize(question);
-  const context = normalize(history.join(" "));
-
-  const combined = `${context} ${q}`;
-  let preferredId = null;
-  if (/daily|standup|yesterday|today/.test(combined)) preferredId = "DOC-03";
-  else if (/ticket|ho tro/.test(combined)) preferredId = "DOC-04";
-  else if (/mentor duty|bao cao mentor/.test(combined)) preferredId = "DOC-05";
-  else if (/topic|de tai|project bank/.test(combined)) preferredId = "DOC-06";
-  else if (/ghep nhom|lap nhom|tao team|cung level/.test(combined)) preferredId = "DOC-07";
-  else if (/deadline|han nop|nop bai|nop lab|23:59|23h59/.test(combined)) preferredId = "DOC-08";
-  else if (/rank|bang xep hang/.test(combined)) preferredId = "DOC-09";
-  else if (/diem danh|attendance|qr|zoom/.test(combined)) preferredId = "DOC-02";
-  else if (/xp|diem kinh nghiem|tinh diem|cong diem/.test(combined)) preferredId = "DOC-01";
-  const preferred = preferredId ? top3.find((document) => document.id === preferredId) : null;
-
-  if (preferred && ANSWERS[preferred.id]) {
-    return { label: "ANSWER", doc_id: preferred.id, reason: null, question: null, answer: ANSWERS[preferred.id] };
-  }
-
-  const buildPhaseTerms = /build|xp|diem|phoenix|vlearn|mentor|lab|workshop|team|nhom|de tai|daily|ticket|deadline/;
   return {
-    label: "ESCALATE", doc_id: null,
-    reason: buildPhaseTerms.test(q) ? "no_source" : "out_of_scope",
+    label: "ESCALATE", doc_id: null, reason: "out_of_scope",
     question: null, answer: null,
   };
 }
@@ -163,6 +74,30 @@ function extractJson(text) {
   const end = raw.lastIndexOf("}");
   if (start < 0 || end <= start) throw new Error("Model did not return a JSON object");
   return JSON.parse(raw.slice(start, end + 1));
+}
+
+const RETRYABLE_STATUSES = new Set([429, 503]);
+
+function retryDelayMs(response, retryIndex) {
+  const retryAfter = response.headers?.get?.("retry-after");
+  if (retryAfter != null && retryAfter !== "") {
+    const seconds = Number(retryAfter);
+    if (Number.isFinite(seconds) && seconds >= 0) return seconds * 1000;
+    const date = Date.parse(retryAfter);
+    if (Number.isFinite(date)) return Math.max(0, date - Date.now());
+  }
+  return 250 * (2 ** retryIndex);
+}
+
+const defaultSleep = (milliseconds) => new Promise((resolve) => setTimeout(resolve, milliseconds));
+
+async function fetchWithRetry(url, options, { maxRetries = 2, sleep = defaultSleep } = {}) {
+  for (let attempt = 0; ; attempt += 1) {
+    const response = await fetch(url, options);
+    const shouldRetry = RETRYABLE_STATUSES.has(response.status) && attempt < maxRetries;
+    if (!shouldRetry) return response;
+    await sleep(retryDelayMs(response, attempt));
+  }
 }
 
 async function loadConfig() {
@@ -193,7 +128,7 @@ async function loadConfig() {
 
 async function callOpenAICompatible(config, payload) {
   const baseUrl = (config.baseUrl || "https://api.openai.com/v1").replace(/\/$/, "");
-  const response = await fetch(`${baseUrl}/chat/completions`, {
+  const response = await fetchWithRetry(`${baseUrl}/chat/completions`, {
     method: "POST",
     headers: { "Content-Type": "application/json", Authorization: `Bearer ${config.apiKey}` },
     body: JSON.stringify({
@@ -233,7 +168,7 @@ const DECISION_SCHEMA = {
 
 async function callGemini(config, payload) {
   const baseUrl = (config.baseUrl || "https://generativelanguage.googleapis.com/v1beta").replace(/\/$/, "");
-  const response = await fetch(`${baseUrl}/models/${encodeURIComponent(config.model)}:generateContent`, {
+  const response = await fetchWithRetry(`${baseUrl}/models/${encodeURIComponent(config.model)}:generateContent`, {
     method: "POST",
     headers: { "Content-Type": "application/json", "x-goog-api-key": config.apiKey },
     body: JSON.stringify({
@@ -276,15 +211,8 @@ export async function decideWithModel(input) {
   };
   try {
     const provider = String(config.provider || "openai").toLowerCase();
-    const modelOutput = await callConfiguredProvider(config, payload);
-    const guardrail = policyGuardrail(input);
-    const output = guardrail?.output || modelOutput;
-    globalThis.ASKONCE_TRACE?.({
-      mode: "configured-model", provider, model: config.model, input: payload,
-      model_output: modelOutput,
-      guardrail: guardrail?.rule || null,
-      output,
-    });
+    const output = await callConfiguredProvider(config, payload);
+    globalThis.ASKONCE_TRACE?.({ mode: "configured-model", provider, model: config.model, input: payload, output });
     return output;
   } catch (error) {
     // A provider outage or malformed JSON is a no-source outcome, never permission
@@ -297,4 +225,4 @@ export async function decideWithModel(input) {
   }
 }
 
-export { SYSTEM_PROMPT, DECISION_SCHEMA, deterministicDecision, extractJson, policyGuardrail };
+export { SYSTEM_PROMPT, DECISION_SCHEMA, deterministicDecision, extractJson, fetchWithRetry };

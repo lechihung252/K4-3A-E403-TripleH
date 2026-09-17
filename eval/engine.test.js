@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { decide, retrieve, verifyDecision } from "../codebase/engine/index.js";
-import { extractJson } from "../codebase/engine/prompt.js";
+import { extractJson, fetchWithRetry } from "../codebase/engine/prompt.js";
 
 async function decideWithLocalAdapter(input) {
   const hadConfig = Object.prototype.hasOwnProperty.call(globalThis, "ASKONCE_AI_CONFIG");
@@ -99,35 +99,45 @@ test("configured OpenAI provider is called exactly once per decision", async () 
   }
 });
 
-test("configured provider is called once before an ambiguity guardrail", async () => {
+test("provider transport retries 429 and 503 with a bounded policy", async () => {
   const originalFetch = globalThis.fetch;
   let calls = 0;
-  const traces = [];
-  globalThis.ASKONCE_AI_CONFIG = {
-    provider: "openai", apiKey: "test-key",
-    baseUrl: "https://model.invalid/v1", model: "test-model",
-  };
-  globalThis.ASKONCE_TRACE = (entry) => traces.push(entry);
   globalThis.fetch = async () => {
     calls += 1;
-    return new Response(JSON.stringify({
-      choices: [{ message: { content: JSON.stringify({
-        label: "ANSWER", doc_id: "DOC-08", reason: null,
-        question: null, answer: "Nộp Lab muộn cần mở ticket. [DOC-08]",
-      }) } }],
-    }), { status: 200, headers: { "Content-Type": "application/json" } });
+    if (calls === 1) return new Response("rate limited", { status: 429, headers: { "Retry-After": "0" } });
+    if (calls === 2) return new Response("unavailable", { status: 503, headers: { "Retry-After": "0" } });
+    return new Response("ok", { status: 200 });
   };
   try {
-    const result = await decide({ question: "Muộn sau 23h59 thì sao?" });
-    assert.equal(calls, 1);
-    assert.equal(result.label, "CLARIFY");
-    assert.equal(traces[0].guardrail, "missing_context");
-    assert.equal(traces[0].model_output.label, "ANSWER");
-    assert.equal(traces[0].output.label, "CLARIFY");
+    const delays = [];
+    const response = await fetchWithRetry("https://model.invalid", {}, {
+      maxRetries: 2,
+      sleep: async (milliseconds) => delays.push(milliseconds),
+    });
+    assert.equal(response.status, 200);
+    assert.equal(calls, 3);
+    assert.deepEqual(delays, [0, 0]);
   } finally {
     globalThis.fetch = originalFetch;
-    delete globalThis.ASKONCE_AI_CONFIG;
-    delete globalThis.ASKONCE_TRACE;
+  }
+});
+
+test("provider transport stops after the retry budget is exhausted", async () => {
+  const originalFetch = globalThis.fetch;
+  let calls = 0;
+  globalThis.fetch = async () => {
+    calls += 1;
+    return new Response("rate limited", { status: 429, headers: { "Retry-After": "0" } });
+  };
+  try {
+    const response = await fetchWithRetry("https://model.invalid", {}, {
+      maxRetries: 2,
+      sleep: async () => {},
+    });
+    assert.equal(response.status, 429);
+    assert.equal(calls, 3);
+  } finally {
+    globalThis.fetch = originalFetch;
   }
 });
 
