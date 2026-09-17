@@ -45,7 +45,7 @@ Rủi ro: thuật ngữ khoá học, tiếng Anh hoặc lỗi chính tả kéo n
 | 23 | M61735 | Không đăng nhập Phoenix nhưng chưa nêu lỗi | CLARIFY |
 | 24 | M48190 | Xin danh sách hỗ trợ nhưng chưa nêu lớp/phòng | CLARIFY |
 
-Rủi ro: model suy diễn từ tài liệu “gần nghĩa” hoặc lộ dữ liệu riêng. Cách chặn: rule personal data, reason rõ ràng, và verify ép ANSWER có `doc_id ∈ top3`.
+Rủi ro: model suy diễn từ tài liệu “gần nghĩa” hoặc lộ dữ liệu riêng. Cách chặn: prompt phân biệt `personal_data/no_source/out_of_scope`, reason rõ ràng, và verify ép ANSWER có `doc_id ∈ top3`.
 
 ## Lớp 4 — Ngữ cảnh hội thoại và vòng hỏi lại
 

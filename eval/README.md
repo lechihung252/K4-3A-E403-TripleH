@@ -10,12 +10,19 @@ Người phụ trách: Nguyễn Văn Hưởng.
 - `run-1.md`: baseline local 28/32 (87,5%), không phải số đo AI.
 - `run-2.md`: baseline local 32/32 (100%), không phải số đo AI.
 - `run-model-1.md`: lượt OpenAI thật sau khi siết prompt, 28/32 (87,5%), ANSWER sai nguồn = 0; dùng bảng này cho CP3.
+- `run-model-2.md`: thử bỏ few-shot để tăng khả năng khái quát, 24/32 (75%), bị loại.
+- `run-model-3.md`: thử few-shot diễn đạt khác golden set, 23/32 (71,9%), bị loại.
 - `trace/*.jsonl`: input, top-3, output, từng check và thời gian của mọi case; từ run-2 có thêm `model_trace` trước verify.
 
 Luồng model không có regex hoặc rule viết riêng cho câu trong golden set. `verify.js`
 chỉ thực thi hai luật bất biến sau AI: `doc_id` phải thuộc top-3 và không hỏi lại
 lần thứ hai. Quality bar đề xuất cho CP4 là **≥ 85% đúng nhãn và 0 ANSWER sai
 nguồn**; `run-model-1` đạt cả hai điều kiện.
+
+Hai thử nghiệm `run-model-2` và `run-model-3` đều không có lỗi provider và vẫn giữ
+0 ANSWER sai nguồn, nhưng accuracy giảm dưới quality bar. Vì vậy prompt sản phẩm
+được khôi phục về bản đã tạo `run-model-1`; không chọn kết quả tốt nhất bằng cách
+ghi đè report và không đưa rule/regex theo golden set vào runtime.
 
 ## Chạy lại
 
