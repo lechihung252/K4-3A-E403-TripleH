@@ -37,7 +37,7 @@ Một **chuỗi** = một câu hỏi cho tới khi ra ANSWER hoặc ESCALATE; ch
 | ③ quyết định 3 nhãn | **Thật khi có `config.local.js`** | 1 lời gọi model trả JSON; thiếu key → `deterministic-local-adapter` (mock, chỉ để test UI) |
 | ④⑤ kiểm sau AI | Thật (code) | `verify.js` chỉ giữ luật bất biến về nguồn và giới hạn hỏi lại; không có regex sửa nhãn model |
 | Tài liệu `kb/` | Tự dựng, ghi rõ | 9 DOC do nhóm soạn theo chủ đề hay hỏi trong `data/discord-pack/`, không phải văn bản chính thức |
-| Ticket TA | Mẫu điền sẵn (`docs/mau-ticket-escalate.md`) | Mọi reason ESCALATE đều kèm mẫu; học viên tự gửi `/ticket create`, bot không tạo thay (non-goal) |
+| Ticket TA | Mẫu điền sẵn (`docs/mau-ticket-escalate.md`) + form soạn ticket khi nguồn là DOC-04 | Mọi reason ESCALATE đều kèm mẫu; lệnh tạo ticket đúng hoặc gõ gần đúng vẫn hiện form khi AI chọn DOC-04. Học viên tự kiểm tra, sao chép và gửi `/ticket create`; bot không tạo thay (non-goal) |
 
 ## API key
 
