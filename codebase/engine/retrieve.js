@@ -87,13 +87,26 @@ function scoreDocument(document, query, synonyms) {
   return score;
 }
 
+// Below this score the question cannot be retrieved on its own ("cái hai", "sai rồi", "mình cần cả ba"),
+// so recent history is blended in. Standalone questions score >= 4 on the current kb/, references <= 1.5.
+const WEAK_QUESTION_SCORE = 3;
+
+function rank(documents, query, synonyms) {
+  return documents
+    .map((document) => ({ document, score: scoreDocument(document, query, synonyms) }))
+    .filter(({ score }) => score > 0)
+    .sort((left, right) => right.score - left.score || left.document.id.localeCompare(right.document.id));
+}
+
 export async function retrieve({ question, history = [], limit = 3 }) {
   const { documents, synonyms } = await loadKnowledgeBase();
-  const context = `${history.slice(-2).join(" ")} ${question}`;
-  return documents
-    .map((document) => ({ document, score: scoreDocument(document, context, synonyms) }))
-    .filter(({ score }) => score > 0)
-    .sort((left, right) => right.score - left.score || left.document.id.localeCompare(right.document.id))
+  // Retrieve on the question alone first: history scored as an equal peer lets a long previous
+  // answer outrank the new question (e.g. a DOC-09 answer pushing DOC-09 to the top of a login question).
+  let ranked = rank(documents, question, synonyms);
+  if (history.length && (!ranked.length || ranked[0].score < WEAK_QUESTION_SCORE)) {
+    ranked = rank(documents, `${history.slice(-2).join(" ")} ${question}`, synonyms);
+  }
+  return ranked
     .slice(0, Math.max(0, limit))
     .map(({ document, score }) => ({
       id: document.id,

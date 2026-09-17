@@ -15,6 +15,7 @@ globalThis.ASKONCE_TRACE = (t) => {
 const state = {
   history: [],       // ① 2–3 tin gần nhất (cả học viên lẫn bot), cũ → mới
   askedOnce: false,  // ⑤ đã CLARIFY trong chuỗi này chưa — code giữ, không tin AI nhớ
+                     //   chuỗi = 1 câu hỏi tới khi ANSWER/ESCALATE; chỉ CLARIFY mới kéo dài chuỗi (flow-v2 "quay về ①")
   lastAnswer: null,  // câu ANSWER gần nhất, để điền mẫu ticket khi correction
   lastTop3: [],      // DOC đã tra, để điền mẫu ticket
 };
@@ -141,6 +142,13 @@ async function ask(text) {
   else html = renderEscalate(routed.reason, text);
 
   thinking.querySelector(".bubble").innerHTML = html;
+
+  // ⑤ chuỗi đóng khi ANSWER/ESCALATE → hạ cờ để câu hỏi tiếp theo là chuỗi mới, không cần bấm "Chuỗi mới".
+  // history/lastAnswer vẫn giữ để lượt sau bắt được "Sai rồi" / "cái hai".
+  if (routed.label !== "CLARIFY" && state.askedOnce) {
+    state.askedOnce = false;
+    routed.notes.push("⑤ chuỗi kết thúc → hạ cờ đã_hỏi_lại, câu tiếp theo là chuỗi mới");
+  }
   trace(res, routed);
 
   // ① lưu vào history cả câu học viên lẫn câu bot, để lượt sau bắt được "cái hai" / "sai rồi"
