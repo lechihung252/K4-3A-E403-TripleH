@@ -3,6 +3,18 @@ import assert from "node:assert/strict";
 import { decide, retrieve, verifyDecision } from "../codebase/engine/index.js";
 import { extractJson } from "../codebase/engine/prompt.js";
 
+async function decideWithLocalAdapter(input) {
+  const hadConfig = Object.prototype.hasOwnProperty.call(globalThis, "ASKONCE_AI_CONFIG");
+  const previousConfig = globalThis.ASKONCE_AI_CONFIG;
+  globalThis.ASKONCE_AI_CONFIG = {};
+  try {
+    return await decide(input);
+  } finally {
+    if (hadConfig) globalThis.ASKONCE_AI_CONFIG = previousConfig;
+    else delete globalThis.ASKONCE_AI_CONFIG;
+  }
+}
+
 test("retrieve maps synonyms and returns at most three documents", async () => {
   const top3 = await retrieve({ question: "Cách pick topic trên Phoenix?" });
   assert.equal(top3[0].id, "DOC-06");
@@ -10,14 +22,14 @@ test("retrieve maps synonyms and returns at most three documents", async () => {
 });
 
 test("decide answers a grounded XP question", async () => {
-  const result = await decide({ question: "XP tính theo team hay cá nhân?" });
+  const result = await decideWithLocalAdapter({ question: "XP tính theo team hay cá nhân?" });
   assert.equal(result.label, "ANSWER");
   assert.equal(result.doc_id, "DOC-01");
   assert.ok(result.top3.some((document) => document.id === result.doc_id));
 });
 
 test("local adapter does not answer an unrelated question from top3[0]", async () => {
-  const result = await decide({ question: "Hôm nay ăn gì?" });
+  const result = await decideWithLocalAdapter({ question: "Hôm nay ăn gì?" });
   assert.equal(result.label, "ESCALATE");
   assert.equal(result.reason, "out_of_scope");
   assert.equal(result.doc_id, null);
