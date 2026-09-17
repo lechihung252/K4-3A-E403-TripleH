@@ -46,6 +46,44 @@ function esc(s) {
   return String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 }
 
+function renderTicketForm(question = "") {
+  const originalQuestion = String(question).trim();
+  const initialDescription = originalQuestion.startsWith("/") ? "" : originalQuestion;
+  return `<form class="ticket-form" data-ticket-form>
+    <div class="ticket-form-h">Điền nội dung ticket</div>
+    <p class="ticket-form-note">AskOnce chỉ soạn nội dung. Bạn kiểm tra rồi tự dán vào ticket riêng trên Discord.</p>
+    <div class="ticket-fields two-cols">
+      <label><span>Loại hỗ trợ</span>
+        <select name="category" required>
+          <option value="">Chọn loại ticket…</option>
+          <option>Tài khoản / đăng nhập</option>
+          <option>XP / điểm / điểm danh</option>
+          <option>Team / đề tài</option>
+          <option>Lab / deadline</option>
+          <option>Khác</option>
+        </select>
+      </label>
+      <label><span>Tiêu đề</span>
+        <input name="title" type="text" maxlength="80" placeholder="VD: Không đăng nhập được Phoenix" required>
+      </label>
+    </div>
+    <div class="ticket-fields">
+      <label><span>Mô tả chi tiết</span>
+        <textarea name="description" rows="4" maxlength="1000" placeholder="Bạn gặp vấn đề gì, từ khi nào, thông báo lỗi nào?" required>${esc(initialDescription)}</textarea>
+      </label>
+      <label><span>Đã thử / bằng chứng (không bắt buộc)</span>
+        <textarea name="evidence" rows="2" maxlength="500" placeholder="VD: đã thử đăng nhập lại; link ảnh chụp màn hình…"></textarea>
+      </label>
+    </div>
+    <div class="actions"><button type="submit" class="primary small">Tạo nội dung để sao chép</button></div>
+    <div class="ticket-output" data-ticket-output hidden>
+      <div class="ticket-h">Nội dung đã soạn — kiểm tra trước khi gửi</div>
+      <pre></pre>
+      <button type="button" class="ghost small" data-copy="">Sao chép nội dung</button>
+    </div>
+  </form>`;
+}
+
 // ---- bước ④⑤⑥ phía UI: code kiểm sau AI, rồi rẽ nhánh ----
 function route(res) {
   const notes = [];
@@ -67,10 +105,12 @@ function route(res) {
   return { label, doc_id, reason, notes };
 }
 
-function renderAnswer(res) {
+function renderAnswer(res, question) {
   const doc = res.top3.find((d) => d.id === res.doc_id);
+  const ticketForm = res.doc_id === "DOC-04" ? renderTicketForm(question) : "";
   const html = `${esc(res.answer)}
     <div class="source">Nguồn: <b>${esc(res.doc_id)}</b> · ${esc(doc?.title || "")}</div>
+    ${ticketForm}
     <div class="actions"><button type="button" class="ghost small" data-say="Sai rồi">Sai rồi</button></div>`;
   state.lastAnswer = res.answer;
   return html;
@@ -137,7 +177,7 @@ async function ask(text) {
 
   const routed = route(res);
   let html;
-  if (routed.label === "ANSWER") html = renderAnswer(res);
+  if (routed.label === "ANSWER") html = renderAnswer(res, text);
   else if (routed.label === "CLARIFY") html = renderClarify(res);
   else html = renderEscalate(routed.reason, text);
 
@@ -158,6 +198,27 @@ async function ask(text) {
 }
 
 composer.addEventListener("submit", (e) => { e.preventDefault(); const t = input.value.trim(); if (t) ask(t); });
+document.addEventListener("submit", (e) => {
+  const form = e.target.closest?.("[data-ticket-form]");
+  if (!form) return;
+  e.preventDefault();
+  const fields = new FormData(form);
+  const evidence = String(fields.get("evidence") || "").trim();
+  const ticket = [
+    "[Ticket hỗ trợ]",
+    `Loại: ${String(fields.get("category") || "").trim()}`,
+    `Tiêu đề: ${String(fields.get("title") || "").trim()}`,
+    "",
+    "Mô tả:",
+    String(fields.get("description") || "").trim(),
+    ...(evidence ? ["", "Đã thử / bằng chứng:", evidence] : []),
+  ].join("\n");
+  const output = form.querySelector("[data-ticket-output]");
+  output.querySelector("pre").textContent = ticket;
+  output.querySelector("[data-copy]").dataset.copy = ticket;
+  output.hidden = false;
+  output.scrollIntoView({ behavior: "smooth", block: "nearest" });
+});
 document.addEventListener("click", (e) => {
   const say = e.target.dataset?.say, copy = e.target.dataset?.copy;
   if (say) ask(say);

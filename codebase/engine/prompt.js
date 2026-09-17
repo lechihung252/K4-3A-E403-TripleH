@@ -102,13 +102,17 @@ async function fetchWithRetry(url, options, { maxRetries = 2, sleep = defaultSle
 
 async function loadConfig() {
   if (globalThis.ASKONCE_AI_CONFIG) return globalThis.ASKONCE_AI_CONFIG;
-  try {
-    const local = await import("./config.local.js");
-    return local.default || local.config;
-  } catch (error) {
-    const missing = String(error?.code || error?.message).includes("MODULE_NOT_FOUND") ||
-      String(error?.message).includes("Failed to fetch");
-    if (!missing) console.warn("AskOnce could not load config.local.js:", error.message);
+  // config.local.js is a browser-only demo setting. Node eval must continue to
+  // read provider credentials from process.env even when that local file exists.
+  if (typeof window !== "undefined") {
+    try {
+      const local = await import("./config.local.js");
+      return local.default || local.config;
+    } catch (error) {
+      const missing = String(error?.code || error?.message).includes("MODULE_NOT_FOUND") ||
+        String(error?.message).includes("Failed to fetch");
+      if (!missing) console.warn("AskOnce could not load config.local.js:", error.message);
+    }
   }
   if (typeof process !== "undefined" && process.env) {
     const provider = (process.env.ASKONCE_PROVIDER ||
