@@ -17,6 +17,8 @@ const state = {
   askedOnce: false,  // ⑤ đã CLARIFY trong chuỗi này chưa — code giữ, không tin AI nhớ
                      //   chuỗi = 1 câu hỏi tới khi ANSWER/ESCALATE; chỉ CLARIFY mới kéo dài chuỗi (flow-v2 "quay về ①")
   lastAnswer: null,  // câu ANSWER gần nhất, để điền mẫu ticket khi correction
+  chainQuestion: null, // câu mở đầu chuỗi hiện tại (trước CLARIFY, nếu có) — để ticket ghi đúng câu học viên hỏi
+  lastQuestion: null, // câu mở đầu chuỗi vừa ANSWER — validation 18/9 dòng 4, 8: ticket correction từng ghi "Câu hỏi gốc: Sai rồi"
   lastTop3: [],      // DOC đã tra, để điền mẫu ticket
 };
 
@@ -113,6 +115,7 @@ function renderAnswer(res, question) {
     ${ticketForm}
     <div class="actions"><button type="button" class="ghost small" data-say="Sai rồi">Sai rồi</button></div>`;
   state.lastAnswer = res.answer;
+  state.lastQuestion = state.chainQuestion || question; // câu gốc, không phải chữ trên chip khi đã qua CLARIFY
   return html;
 }
 
@@ -125,6 +128,8 @@ function renderClarify(res) {
 function renderEscalate(reason, question) {
   // Nhóm chốt 17/9: mọi reason đều kèm mẫu ticket (kể cả out_of_scope = quyết định BTC/mentor), theo spec §6.
   let html = esc(REASON_TEXT[reason] || REASON_TEXT.no_source);
+  // correction: "Sai rồi" không phải câu hỏi — ticket ghi câu học viên đã hỏi để TA biết xử lý gì (validation 18/9, 2/2 người gặp)
+  if (reason === "correction" && state.lastQuestion) question = state.lastQuestion;
   // Khung theo docs/mau-ticket-escalate.md; thêm "Câu trả lời cũ" khi correction (flow-v2 ⑥)
   const ticket = [
     "[Ticket hỗ trợ — tạo tự động từ Trợ lý]",
@@ -164,6 +169,7 @@ async function ask(text) {
   showChips([]);
   input.value = "";
   const thinking = addMsg("bot", `<span class="dots">…</span>`);
+  if (!state.askedOnce) state.chainQuestion = text; // ① chuỗi mới bắt đầu từ câu này; trả lời CLARIFY thì giữ câu cũ
 
   let res;
   try {
@@ -225,7 +231,7 @@ document.addEventListener("click", (e) => {
   if (copy) navigator.clipboard?.writeText(copy).then(() => (e.target.textContent = "Đã chép"));
 });
 $("reset").addEventListener("click", () => {
-  Object.assign(state, { history: [], askedOnce: false, lastAnswer: null, lastTop3: [] });
+  Object.assign(state, { history: [], askedOnce: false, lastAnswer: null, chainQuestion: null, lastQuestion: null, lastTop3: [] });
   chat.innerHTML = ""; showChips([]);
   ["t-history", "t-top3", "t-json", "t-route"].forEach((id) => ($(id).textContent = "—"));
   $("t-asked").textContent = "false";
